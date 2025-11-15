@@ -4,6 +4,28 @@ Documento padrão para projetos FBD (2025.2). Este guia descreve **modelo de dad
 
 ---
 
+# Requisitos para o projeto:
+1.Criar e ativar o ambiente virtual:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # No Linux/Mac
+   # ou
+   venv\Scripts\activate  # No Windows
+   ```
+2.  Instalar as dependecias:
+   Instale as dependências:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Executar o projeto:
+1. Certifique-se de que o ambiente virtual está ativado
+2. Execute o servidor de desenvolvimento:
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+
+
 ## 1) Texto padrão (para reutilização em outros projetos)
 1. **Coluna `ativo`**: todo recurso possui um campo booleano `ativo` (default: `true`). Operações de “exclusão” apenas marcam `ativo = false`.
 2. **CRUD**:
