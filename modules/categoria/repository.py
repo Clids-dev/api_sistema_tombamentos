@@ -3,10 +3,10 @@ from modules.categoria.schemas import CategoriaCreate
 
 
 class CategoriaRepository:
-    QUERY_CATEGORIAS = "SELECT nome FROM categoria"
-    QUERY_CATEGORIA_ID = "SELECT name FROM categoria where id = (%s)"
-    QUERY_CREATE_CATEGORIA = 'INSERT INTO categoria (nome) VALUES (%s) RETURNING id;'
-    QUERY_PUT_CATEGORIA = "UPDATE categorias SET name = (%s) WHERE categorias.id = (%s)"
+    QUERY_CATEGORIAS = "SELECT nome FROM categorias"
+    QUERY_CATEGORIA_ID = "SELECT nome FROM categorias where id = (%s)"
+    QUERY_CREATE_CATEGORIA = 'INSERT INTO categorias VALUES (%s) RETURNING id;'
+    QUERY_PUT_CATEGORIA = "UPDATE categorias SET nome = (%s) WHERE categorias.id = (%s)"
     QUERY_DELETE_CATEGORIA = "UPDATE categorias SET ativo = FALSE WHERE categorias.id = (%s)"
     def get_all(self):
         db = DataBase()
@@ -25,7 +25,7 @@ class CategoriaRepository:
     def get_id(self, id: int):
         db = DataBase()
         query = self.QUERY_CATEGORIA_ID % id
-        categoria = db.execute(query, many=False)
+        categoria = db.commit(query)
         if categoria:
             return {"id": categoria[0], "nome": categoria[1], "ativo": categoria[2]}
         return {}
