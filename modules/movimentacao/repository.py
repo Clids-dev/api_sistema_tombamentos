@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from core.db import DataBase
 from modules.movimentacao.schemas import MovimentacaoCreate

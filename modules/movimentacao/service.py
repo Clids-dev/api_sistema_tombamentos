@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from modules.movimentacao.repository import MovimentacaoRepository
 from modules.movimentacao.schemas import MovimentacaoCreate
