@@ -8,11 +8,11 @@ from modules.bem.service import BemService
 router = APIRouter(prefix="/bem", tags=["Bem"])
 
 @router.get("/", response_model=list[schemas.Bem])
-def list_bens():
+def get_bens():
     service = BemService()
     return service.get_bens()
 
-@router.get("/", response_model=Optional[schemas.Bem])
+@router.get("/{id}/", response_model=Optional[schemas.Bem])
 def get_bem_by_id(id: int):
     service = BemService()
     return service.get_bem_by_id(id)

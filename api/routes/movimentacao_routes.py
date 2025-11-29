@@ -12,7 +12,7 @@ def get_movimentacoes():
     service = MovimentacaoService()
     return service.get_movimentacoes()
 
-@router.get("/", response_model=list[schemas.Movimentacao])
+@router.get("/{id}/", response_model=list[schemas.Movimentacao])
 def get_movimentacao_by_id(id: int):
     service = MovimentacaoService()
     return service.get_movimentacao_by_id(id)

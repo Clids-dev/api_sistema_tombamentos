@@ -14,7 +14,7 @@ def list_categorias():
     return service.get_categorias()
 
 
-@router.get("/", response_model=Optional[schemas.Categoria])
+@router.get("/{id}/", response_model=Optional[schemas.Categoria])
 def get_categoria_by_id(id: int):
     service = CategoriaService()
     return service.get_categoria_id(id)

@@ -10,7 +10,7 @@ def get_setores():
     service = SetorService()
     return service.get_setores()
 
-@router.get("/", response_model=list[schemas.Setor])
+@router.get("/{id}/", response_model=list[schemas.Setor])
 def get_setor_by_id(id: int):
     service = SetorService()
     return service.get_setor_by_id(id)

@@ -10,7 +10,7 @@ def get_responsaveis():
     service = ResponsavelService()
     return service.get_responsaveis()
 
-@router.get("/", response_model=list[schemas.Responsavel])
+@router.get("/{id}/", response_model=list[schemas.Responsavel])
 def get_responsavel_by_id(id: int):
     service = ResponsavelService()
     return service.get_responsavel_by_id(id)
