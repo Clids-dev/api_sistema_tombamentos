@@ -5,11 +5,32 @@ from modules.movimentacao.schemas import MovimentacaoCreate
 
 
 class MovimentacaoRepository():
-    QUERY_MOVIMENTACOES = ""
-    QUERY_MOVIMENTACOES_ID = ""
-    QUERY_CREATE_MOVIMENTACOES = ""
-    QUERY_PUT_MOVIMENTACAO = ""
-    QUERY_DELETE_MOVIMENTACAO = ""
+    QUERY_MOVIMENTACOES = """
+                          SELECT id, bem_id, setor_origem_id, setor_destino_id, data, observacao
+                          FROM movimentacoes
+                          WHERE ativo = TRUE
+                          """
+    QUERY_MOVIMENTACOES_ID = """
+                             SELECT id, bem_id, setor_origem_id, setor_destino_id, data, observacao
+                             FROM movimentacoes
+                             """
+    QUERY_CREATE_MOVIMENTACOES = """
+                                 INSERT INTO movimentacoes (bem_id, setor_origem_id, setor_destino_id, data, observacao, ativo)
+                                 VALUES (%s, %s, %s, %s, %s, TRUE)
+                                     RETURNING id, bem_id, setor_origem_id, setor_destino_id, data, observacao; 
+                                 """
+    QUERY_PUT_MOVIMENTACAO = """
+                             UPDATE movimentacoes
+                             SET data = %s, setor_origem_id = %s
+                             WHERE id = %s AND ativo = TRUE
+                                 RETURNING id, bem_id, setor_origem_id, setor_destino_id, data, observacao; 
+                             """
+    QUERY_DELETE_MOVIMENTACAO = """
+                                UPDATE movimentacoes
+                                SET ativo = FALSE
+                                WHERE id = %s
+                                    RETURNING id; 
+                                """
 
     def get_all(self):
         db = DataBase()

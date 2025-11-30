@@ -8,4 +8,4 @@ class Categoria(BaseModel):
 
 
 class CategoriaCreate(BaseModel):
-    nome: int
+    nome: str

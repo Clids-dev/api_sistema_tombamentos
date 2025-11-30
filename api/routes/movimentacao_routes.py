@@ -26,6 +26,7 @@ def add_movimentacao(movimentacao: MovimentacaoCreate):
 def update_movimentacao(id: int, data: datetime, setor_destino_id):
     service = MovimentacaoService()
     return service.put_movimentacao(id, data, setor_destino_id)
+
 @router.delete("/", response_model=list[schemas.Movimentacao])
 def delete_movimentacao(id: int):
     service = MovimentacaoService()

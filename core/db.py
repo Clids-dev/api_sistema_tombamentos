@@ -13,7 +13,7 @@ class DataBase:
             port=settings.DB_PORT
         )
 
-    def _get_conn(self):
+    def get_conn(self):
         self.conn = psycopg2.connect(
             host="localhost",
             database="your_database",

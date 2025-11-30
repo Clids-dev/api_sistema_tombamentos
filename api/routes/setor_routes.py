@@ -14,16 +14,16 @@ def get_setores():
 def get_setor_by_id(id: int):
     service = SetorService()
     return service.get_setor_by_id(id)
-@router.post("/", response_model=list[schemas.Setor])
+
+@router.post("/", response_model=list[schemas.SetorCreate])
 def add_setor(setor: SetorCreate):
     service = SetorService()
     return service.add_setor(setor)
 
-@router.put("/", response_model=list[schemas.Setor])
+@router.put("/", response_model=list[schemas.SetorCreate])
 def update_setor(id: int, novo_nome: str):
     service = SetorService()
     return service.put_setor(id, novo_nome)
-
 
 router.delete("/", response_model=list[schemas.Setor])
 def delete_setor(id: int):

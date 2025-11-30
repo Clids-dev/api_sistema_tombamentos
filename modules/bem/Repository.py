@@ -8,13 +8,14 @@ class BemRepository(DataBase):
                         'VALUES (%s, %s, %s, %s, %s) RETURNING id;')
 
     def get_all(self):
+        print('AQUIIIIIIIIII')
         db = DataBase()
         bens = db.execute(BemRepository.QUERY_BENS)
         results = []
         for bem in bens:
             results.append({"id": bem[0], "nome": bem[1], "codigo_tombamento": bem[2],
                             "valor": bem[3], "status": bem[4], "ativo": bem[5]})
-            return results
+        return results
 
 
     def save(self, bem : BemCreate):

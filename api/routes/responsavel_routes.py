@@ -15,12 +15,12 @@ def get_responsavel_by_id(id: int):
     service = ResponsavelService()
     return service.get_responsavel_by_id(id)
 
-@router.post("/", response_model=list[schemas.Responsavel])
+@router.post("/", response_model=list[schemas.ResponsavelCreate])
 def add_responsavel(responsavel: ResponsavelCreate):
     service = ResponsavelService()
     return service.create_responsavel(responsavel)
 
-@router.put("/", response_model=list[schemas.Responsavel])
+@router.put("/", response_model=list[schemas.ResponsavelCreate])
 def put_responsavel(id: int, novo_nome: str):
     service = ResponsavelService()
     return service.put_responsavel(id, novo_nome)

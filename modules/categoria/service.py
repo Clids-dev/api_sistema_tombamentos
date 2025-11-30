@@ -1,11 +1,14 @@
 from modules.categoria.repository import CategoriaRepository
-from modules.categoria.schemas import CategoriaCreate
+from modules.categoria.schemas import CategoriaCreate, Categoria
 
 
 class CategoriaService:
-    def get_categorias(self):
-        repository = CategoriaRepository()
-        return repository.get_all()
+    def __init__(self, repository: CategoriaRepository = None):
+        self.repository = repository or CategoriaRepository()
+
+    def get_categorias(self) -> list[Categoria]:
+        categorias = self.repository.get_all()
+        return categorias
 
     def create_categoria(self, categoria: CategoriaCreate):
         repository = CategoriaRepository()

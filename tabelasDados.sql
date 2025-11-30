@@ -1,13 +1,13 @@
 -- 1. Limpeza (Opcional: remove as tabelas se já existirem para recriar do zero)
 DROP TABLE IF EXISTS movimentacao;
 DROP TABLE IF EXISTS bem;
-DROP TABLE IF EXISTS setor;
-DROP TABLE IF EXISTS categoria;
-DROP TABLE IF EXISTS responsavel;
+DROP TABLE IF EXISTS setores;
+DROP TABLE IF EXISTS categorias;
+DROP TABLE IF EXISTS responsaveis;
 
 -- 2. Criação da tabela Categoria
 -- (Criada primeiro pois não depende de ninguém)
-CREATE TABLE categoria (
+CREATE TABLE categorias (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL UNIQUE,
     ativo BOOLEAN DEFAULT TRUE
@@ -15,7 +15,7 @@ CREATE TABLE categoria (
 
 -- 3. Criação da tabela Responsavel
 -- (Conforme solicitado no item 1.5)
-CREATE TABLE responsavel (
+CREATE TABLE responsaveis (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
     cargo VARCHAR(100),
@@ -24,7 +24,7 @@ CREATE TABLE responsavel (
 
 -- 4. Criação da tabela Setor
 -- (O campo 'responsavel' aqui é texto livre conforme o item 1.3)
-CREATE TABLE setor (
+CREATE TABLE setores (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL UNIQUE,
     responsavel VARCHAR(150),
@@ -49,8 +49,8 @@ CREATE TABLE bem (
 CREATE TABLE movimentacao (
     id SERIAL PRIMARY KEY,
     bem_id INTEGER NOT NULL REFERENCES bem(id),
-    setor_origem_id INTEGER REFERENCES setor(id), -- Pode ser nulo se for a primeira entrada
-    setor_destino_id INTEGER NOT NULL REFERENCES setor(id),
+    setor_origem_id INTEGER REFERENCES setores(id), -- Pode ser nulo se for a primeira entrada
+    setor_destino_id INTEGER NOT NULL REFERENCES setores(id),
     data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ativo BOOLEAN DEFAULT TRUE
 );
@@ -58,14 +58,14 @@ CREATE TABLE movimentacao (
 BEGIN;
 
 -- 1. Inserindo Categorias
-INSERT INTO categoria (nome, ativo) VALUES
+INSERT INTO categorias (nome, ativo) VALUES
 ('Informática', TRUE),
 ('Mobiliário', TRUE),
 ('Veículos', TRUE),
 ('Eletrodomésticos', TRUE);
 
 -- 2. Inserindo Responsáveis (Pessoas)
-INSERT INTO responsavel (nome, cargo, ativo) VALUES
+INSERT INTO responsaveis (nome, cargo, ativo) VALUES
 ('Ana Silva', 'Gerente de TI', TRUE),
 ('Carlos Souza', 'Analista de RH', TRUE),
 ('Roberto Dias', 'Almoxarife', TRUE),
@@ -73,7 +73,7 @@ INSERT INTO responsavel (nome, cargo, ativo) VALUES
 
 -- 3. Inserindo Setores
 -- O campo 'responsavel' aqui é texto, conforme sua estrutura original
-INSERT INTO setor (nome, responsavel, ativo) VALUES
+INSERT INTO setores (nome, responsavel, ativo) VALUES
 ('Departamento de TI', 'Ana Silva', TRUE),
 ('Recursos Humanos', 'Carlos Souza', TRUE),
 ('Almoxarifado Central', 'Roberto Dias', TRUE),

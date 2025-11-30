@@ -1,6 +1,9 @@
 from typing import Optional
 
 from fastapi import APIRouter
+from fastapi.params import Depends
+
+from core.db import DataBase
 from modules.bem import schemas
 from modules.bem.schemas import BemCreate
 from modules.bem.service import BemService

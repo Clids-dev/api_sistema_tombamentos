@@ -1,39 +1,42 @@
 from core.db import DataBase
-from modules.categoria.schemas import CategoriaCreate
+from modules.categoria.schemas import CategoriaCreate, Categoria
 
 
 class CategoriaRepository:
-    QUERY_CATEGORIAS = "SELECT nome FROM categorias"
-    QUERY_CATEGORIA_ID = "SELECT nome FROM categorias where id = (%s)"
+    QUERY_CATEGORIAS = """SELECT id, nome, ativo FROM categorias WHERE ativo = TRUE"""
+    QUERY_CATEGORIA_ID = """SELECT id, nome, ativo FROM categorias where id = %s AND ativo = TRUE"""
     QUERY_CREATE_CATEGORIA = 'INSERT INTO categorias VALUES (%s) RETURNING id;'
     QUERY_PUT_CATEGORIA = "UPDATE categorias SET nome = (%s) WHERE categorias.id = (%s)"
     QUERY_DELETE_CATEGORIA = "UPDATE categorias SET ativo = FALSE WHERE categorias.id = (%s)"
+
     def get_all(self):
         db = DataBase()
-        categorias = db.execute(self.QUERY_CATEGORIAS)
+        rows = db.execute(self.QUERY_CATEGORIAS)
         results = []
-        for categoria in categorias:
-            results.append({"id": categoria[0], "nome": categoria[1], "ativo": categoria[2]})
+        if not rows:
+            return results
+        for row in rows:
+            (results.append(Categoria(id=row[0], nome=row[1], ativo=row[2])))
         return results
 
     def save(self, categoria: CategoriaCreate):
         db = DataBase()
-        query = self.QUERY_CREATE_CATEGORIA % f"'{categoria[0]}, {categoria[1]}, {categoria[2]}'"
-        result = db.execute(query)
+        query = self.QUERY_CREATE_CATEGORIA % categoria.nome
+        result = db.commit(query)
         return {"id": result[0], "nome": categoria[1], "ativo": categoria[2]}
 
     def get_id(self, id: int):
         db = DataBase()
-        query = self.QUERY_CATEGORIA_ID % id
-        categoria = db.commit(query)
-        if categoria:
-            return {"id": categoria[0], "nome": categoria[1], "ativo": categoria[2]}
-        return {}
+        rows = db.execute(self.QUERY_CATEGORIA_ID % id)
+        if not rows:
+            return None
+        row = rows[0]
+        return Categoria(id=row[0], nome=row[1], ativo=row[2])
 
     def put(self, id: int, novo_nome: str):
         db = DataBase()
-        query = self.QUERY_PUT_CATEGORIA % f"{novo_nome}, {id}"
-        categoria = db.execute(query, many=False)
+        query = self.QUERY_PUT_CATEGORIA % (novo_nome,id)
+        categoria = db.commit(query)
         if categoria:
             return f"Nome: {categoria[1]}"
         return False
@@ -41,7 +44,7 @@ class CategoriaRepository:
     def delete(self, id: int):
         db = DataBase()
         query = self.QUERY_DELETE_CATEGORIA % f"{id}"
-        categoria = db.execute(query, many=False)
+        categoria = db.commit(query)
         if categoria:
             return True
         return False
