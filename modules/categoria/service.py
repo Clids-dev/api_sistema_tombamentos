@@ -26,11 +26,22 @@ class CategoriaService:
         return categoria
 
     def put_categoria(self,id: int, novo_nome: str):
-        repository = CategoriaRepository()
-        categoria = repository.put(id, novo_nome)
-        return categoria
+        try:
+            if novo_nome == self.get_categoria_id(id).nome:
+                raise ValueError
+            repository = CategoriaRepository()
+            return repository.put(id, novo_nome)
+        except errors.NoDataFound:
+            raise HTTPException(status_code=404, detail=f"Categoria com id {id} não encontrada")
+        except errors.UniqueViolation:
+            raise HTTPException(status_code=409, detail=f"Categoria {novo_nome} já existe")
+        except ValueError:
+            raise HTTPException(status_code=400, detail="O novo nome é igual ao nome atual da categoria")
+
 
     def delete_categoria(self, id: int):
-        repository = CategoriaRepository()
-        categoria = repository.delete(id)
-        return categoria
+        try:
+            repository = CategoriaRepository()
+            return repository.delete(id)
+        except errors.NoDataFound:
+            raise HTTPException(status_code=404, detail=f"Categoria com id {id} não encontrada")

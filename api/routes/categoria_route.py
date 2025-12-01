@@ -27,13 +27,13 @@ def add_categoria(categoria: CategoriaCreate):
     return service.create_categoria(categoria)
 
 
-@router.put("/", response_model=list[CategoriaCreate])
+@router.put("/", response_model=CategoriaCreate)
 def update_categoria(id: int, novo_nome: str):
     service = CategoriaService()
     return service.put_categoria(id, novo_nome)
 
 
-@router.delete("/", response_model=list[Categoria])
+@router.delete("/", response_model=Categoria)
 def delete_categoria(id: int):
     service = CategoriaService()
     return service.delete_categoria(id)

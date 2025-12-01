@@ -6,8 +6,8 @@ class CategoriaRepository:
     QUERY_CATEGORIAS = """SELECT id, nome, ativo FROM categorias WHERE ativo = TRUE"""
     QUERY_CATEGORIA_ID = """SELECT id, nome, ativo FROM categorias where id = %s AND ativo = TRUE"""
     QUERY_CREATE_CATEGORIA = """INSERT INTO categorias (nome) VALUES (%s) RETURNING id"""
-    QUERY_PUT_CATEGORIA = "UPDATE categorias SET nome = (%s) WHERE categorias.id = (%s)"
-    QUERY_DELETE_CATEGORIA = "UPDATE categorias SET ativo = FALSE WHERE categorias.id = (%s)"
+    QUERY_PUT_CATEGORIA = "UPDATE categorias SET nome = (%s) WHERE categorias.id = (%s) RETURNING id, nome, ativo"
+    QUERY_DELETE_CATEGORIA = """UPDATE categorias SET ativo = FALSE WHERE categorias.id = (%s) RETURNING id, nome, ativo"""
 
     def get_all(self):
         db = DataBase()
@@ -35,16 +35,16 @@ class CategoriaRepository:
 
     def put(self, id: int, novo_nome: str):
         db = DataBase()
-        query = self.QUERY_PUT_CATEGORIA % (novo_nome,id)
-        categoria = db.commit(query)
+        query = self.QUERY_PUT_CATEGORIA
+        categoria = db.commit(query, (novo_nome, id))
         if categoria:
-            return f"Nome: {categoria[1]}"
-        return False
+            return Categoria(id=categoria[0], nome=categoria[1], ativo=True)
+        return None
 
     def delete(self, id: int):
         db = DataBase()
-        query = self.QUERY_DELETE_CATEGORIA % f"{id}"
+        query = self.QUERY_DELETE_CATEGORIA % id
         categoria = db.commit(query)
         if categoria:
-            return True
-        return False
+            return Categoria(id=categoria[0], nome=categoria[1], ativo=False)
+        return None
