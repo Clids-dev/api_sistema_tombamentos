@@ -1,103 +1,102 @@
--- 1. Limpeza (Opcional: remove as tabelas se já existirem para recriar do zero)
-DROP TABLE IF EXISTS movimentacoes;
-DROP TABLE IF EXISTS bens;
-DROP TABLE IF EXISTS setores;
-DROP TABLE IF EXISTS categorias;
-DROP TABLE IF EXISTS responsaveis;
+DROP TABLE responsaveis CASCADE;
+DROP TABLE setores CASCADE;
+DROP TABLE movimentacoes CASCADE;
+DROP TABLE bens CASCADE;
+DROP TABLE categorias CASCADE;
 
--- 2. Criação da tabela Categoria
--- (Criada primeiro pois não depende de ninguém)
-CREATE TABLE categorias (
-    nome VARCHAR(100) NOT NULL UNIQUE,
-    id SERIAL PRIMARY KEY,
-    ativo BOOLEAN DEFAULT TRUE
-);
 
--- 3. Criação da tabela Responsavel
--- (Conforme solicitado no item 1.5)
-CREATE TABLE responsaveis (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(150) NOT NULL,
-    cargo VARCHAR(100),
-    ativo BOOLEAN DEFAULT TRUE
-);
 
--- 4. Criação da tabela Setor
--- (O campo 'responsavel' aqui é texto livre conforme o item 1.3)
-CREATE TABLE setores (
-    nome VARCHAR(100) NOT NULL UNIQUE,
-    id SERIAL PRIMARY KEY,
-    responsavel VARCHAR(150),
-    ativo BOOLEAN DEFAULT TRUE
-);
 
--- 5. Criação da tabela Bem
--- (Inclui restrição CHECK para garantir que o status seja válido)
+
+
 CREATE TABLE bens (
-    nome VARCHAR(200) NOT NULL,
-    codigo_tombamento VARCHAR(50) NOT NULL UNIQUE,
     id SERIAL PRIMARY KEY,
-    valor NUMERIC(15, 2), -- Suporta valores monetários com 2 casas decimais
-    status VARCHAR(30) CHECK (status IN ('em_uso', 'em_estoque', 'descartado', 'em_manutencao')),
-    ativo BOOLEAN DEFAULT TRUE
-    -- Nota: Se desejar vincular o Bem à Categoria, descomente a linha abaixo:
-    -- , categoria_id INTEGER REFERENCES categoria(id)
+    nome VARCHAR(100) NOT NULL,
+    codigo_tombamento VARCHAR(50) UNIQUE NOT NULL,
+    valor DECIMAL NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    ativo BOOLEAN NOT NULL DEFAULT TRUE
 );
 
--- 6. Criação da tabela Movimentacao
--- (Depende das tabelas Bem e Setor)
+CREATE TABLE categorias (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    ativo BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE responsaveis(
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    cargo VARCHAR(100) NOT NULL,
+    ativo BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE setores (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    responsavel_id INTEGER REFERENCES responsaveis(id),
+    ativo BOOLEAN NOT NULL DEFAULT TRUE
+);
+
 CREATE TABLE movimentacoes (
     id SERIAL PRIMARY KEY,
-    bem_id INTEGER NOT NULL REFERENCES bens(id),
-    setor_origem_id INTEGER REFERENCES setores(id), -- Pode ser nulo se for a primeira entrada
-    setor_destino_id INTEGER NOT NULL REFERENCES setores(id),
-    data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    ativo BOOLEAN DEFAULT TRUE
+    bem_id INTEGER REFERENCES bens(id),
+    setor_origem_id INTEGER REFERENCES setores(id),
+    setor_destino_id INTEGER REFERENCES setores(id),
+    data_movimentacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ativo BOOLEAN NOT NULL DEFAULT TRUE
 );
--- Inicia uma transação para garantir que tudo seja inserido ou nada seja (segurança)
-BEGIN;
 
--- 1. Inserindo Categorias
+BEGIN; -- Inicia transação para garantir integridade
+
+-- 1. Inserir Categorias
 INSERT INTO categorias (nome, ativo) VALUES
 ('Informática', TRUE),
 ('Mobiliário', TRUE),
 ('Veículos', TRUE),
-('Eletrodomésticos', TRUE);
+('Eletrônicos', TRUE);
 
--- 2. Inserindo Responsáveis (Pessoas)
+-- 2. Inserir Responsáveis (Necessário criar antes dos Setores)
 INSERT INTO responsaveis (nome, cargo, ativo) VALUES
-('Ana Silva', 'Gerente de TI', TRUE),
-('Carlos Souza', 'Analista de RH', TRUE),
-('Roberto Dias', 'Almoxarife', TRUE),
-('Mariana Lima', 'Diretora Financeira', TRUE);
+('Carlos Mendes', 'Gerente de TI', TRUE),
+('Fernanda Costa', 'Diretora Financeira', TRUE),
+('João Batista', 'Chefe de Almoxarifado', TRUE),
+('Mariana Alves', 'Supervisora de RH', TRUE);
 
--- 3. Inserindo Setores
--- O campo 'responsavel' aqui é texto, conforme sua estrutura original
-INSERT INTO setores (nome, responsavel, ativo) VALUES
-('Departamento de TI', 'Ana Silva', TRUE),
-('Recursos Humanos', 'Carlos Souza', TRUE),
-('Almoxarifado Central', 'Roberto Dias', TRUE),
-('Manutenção Externa', 'Empresa Terceira', TRUE);
+-- 3. Inserir Setores (Vinculando aos Responsáveis criados acima)
+-- IDs esperados: 1=Carlos, 2=Fernanda, 3=João, 4=Mariana
+INSERT INTO setores (nome, responsavel_id, ativo) VALUES
+('Departamento de Tecnologia', 1, TRUE),
+('Financeiro', 2, TRUE),
+('Almoxarifado Central', 3, TRUE),
+('Recursos Humanos', 4, TRUE);
 
--- 4. Inserindo Bens (Patrimônio)
--- Note que os status devem respeitar a restrição CHECK criada anteriormente
+-- 4. Inserir Bens
 INSERT INTO bens (nome, codigo_tombamento, valor, status, ativo) VALUES
-('Notebook Dell Latitude', 'TB-00100', 4500.00, 'em_uso', TRUE),
-('Monitor LG 24pol', 'TB-00101', 850.00, 'em_uso', TRUE),
-('Cadeira Ergonômica', 'TB-00200', 600.00, 'em_estoque', TRUE),
-('Mesa de Reunião', 'TB-00201', 1200.00, 'em_uso', TRUE),
-('Projetor Epson', 'TB-00300', 2500.00, 'em_manutencao', TRUE),
-('Carro Fiat Fiorino', 'TB-00400', 55000.00, 'em_uso', TRUE),
-('Teclado Antigo', 'TB-99999', 50.00, 'descartado', FALSE);
+('Notebook Lenovo Thinkpad', 'PAT-2024-001', 4200.00, 'em_uso', TRUE),
+('Monitor Samsung 27"', 'PAT-2024-002', 1200.50, 'em_uso', TRUE),
+('Cadeira Presidente', 'PAT-2024-003', 850.00, 'em_estoque', TRUE),
+('Mesa em L', 'PAT-2024-004', 600.00, 'em_uso', TRUE),
+('Servidor Dell PowerEdge', 'PAT-2024-005', 25000.00, 'em_manutencao', TRUE);
 
--- 5. Inserindo Movimentações
--- Estamos assumindo os IDs gerados sequencialmente (1, 2, 3...) pelas inserções acima.
--- Exemplo: Bem ID 1 (Notebook) saiu do Setor 3 (Almoxarifado) para Setor 1 (TI)
-INSERT INTO movimentacoes (bem_id, setor_origem_id, setor_destino_id, data, ativo) VALUES
-(1, 3, 1, '2023-10-01 08:30:00', TRUE),  -- Notebook foi para TI
-(2, 3, 1, '2023-10-01 08:35:00', TRUE),  -- Monitor foi para TI
-(3, NULL, 3, '2023-09-15 10:00:00', TRUE), -- Cadeira chegou direto no Almoxarifado (Origem NULL)
-(5, 1, 4, NOW(), TRUE);                  -- Projetor saiu da TI para Manutenção (Data de agora)
+-- 5. Inserir Movimentações
+-- IDs de Setores esperados: 1=TI, 2=Financeiro, 3=Almoxarifado, 4=RH
+-- IDs de Bens esperados: 1=Notebook, 2=Monitor, 3=Cadeira...
 
--- Confirma as alterações
-COMMIT;
+INSERT INTO movimentacoes (bem_id, setor_origem_id, setor_destino_id, data_movimentacao, ativo) VALUES
+-- Notebook saiu do Almoxarifado (3) para TI (1)
+(1, 3, 1, '2024-01-10 09:00:00', TRUE),
+
+-- Monitor saiu do Almoxarifado (3) para TI (1)
+(2, 3, 1, '2024-01-10 09:05:00', TRUE),
+
+-- Cadeira chegou direto no Almoxarifado (Origem NULL = Compra nova)
+(3, NULL, 3, '2024-01-15 14:00:00', TRUE),
+
+-- Mesa saiu do Almoxarifado (3) para o RH (4)
+(4, 3, 4, '2024-01-20 10:30:00', TRUE),
+
+-- Servidor saiu da TI (1) para Manutenção externa (destino pode ser NULL ou um setor específico de manutenção, aqui simulando volta para Almoxarifado)
+(5, 1, 3, NOW(), TRUE);
+
+COMMIT; -- Confirma a gravação
