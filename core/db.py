@@ -30,9 +30,9 @@ class DataBase:
         cursor.close()
         return result
 
-    def commit(self, sql):
+    def commit(self, sql, params=None):
         cursor = self.conn.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, params)
         self.conn.commit()
         result = cursor.fetchone()
         self.conn.close()

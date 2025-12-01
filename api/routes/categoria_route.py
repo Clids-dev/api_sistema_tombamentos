@@ -21,7 +21,7 @@ def get_categoria_by_id(id: int):
     return service.get_categoria_id(id)
 
 
-@router.post("/", response_model=list[CategoriaCreate])
+@router.post("/", response_model=CategoriaCreate)
 def add_categoria(categoria: CategoriaCreate):
     service = CategoriaService()
     return service.create_categoria(categoria)

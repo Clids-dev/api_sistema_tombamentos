@@ -8,8 +8,8 @@ DROP TABLE IF EXISTS responsaveis;
 -- 2. Criação da tabela Categoria
 -- (Criada primeiro pois não depende de ninguém)
 CREATE TABLE categorias (
-    id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL UNIQUE,
+    id SERIAL PRIMARY KEY,
     ativo BOOLEAN DEFAULT TRUE
 );
 
@@ -25,8 +25,8 @@ CREATE TABLE responsaveis (
 -- 4. Criação da tabela Setor
 -- (O campo 'responsavel' aqui é texto livre conforme o item 1.3)
 CREATE TABLE setores (
-    id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL UNIQUE,
+    id SERIAL PRIMARY KEY,
     responsavel VARCHAR(150),
     ativo BOOLEAN DEFAULT TRUE
 );
@@ -34,9 +34,9 @@ CREATE TABLE setores (
 -- 5. Criação da tabela Bem
 -- (Inclui restrição CHECK para garantir que o status seja válido)
 CREATE TABLE bem (
-    id SERIAL PRIMARY KEY,
     nome VARCHAR(200) NOT NULL,
     codigo_tombamento VARCHAR(50) NOT NULL UNIQUE,
+    id SERIAL PRIMARY KEY,
     valor NUMERIC(15, 2), -- Suporta valores monetários com 2 casas decimais
     status VARCHAR(30) CHECK (status IN ('em_uso', 'em_estoque', 'descartado', 'em_manutencao')),
     ativo BOOLEAN DEFAULT TRUE

@@ -1,3 +1,6 @@
+from fastapi import HTTPException
+from psycopg2 import errors
+
 from modules.categoria.repository import CategoriaRepository
 from modules.categoria.schemas import CategoriaCreate, Categoria
 
@@ -11,8 +14,11 @@ class CategoriaService:
         return categorias
 
     def create_categoria(self, categoria: CategoriaCreate):
-        repository = CategoriaRepository()
-        return repository.save(categoria)
+        try:
+            repository = CategoriaRepository()
+            return repository.save(categoria)
+        except errors.UniqueViolation:
+            raise HTTPException(status_code=409, detail=f"Categoria {categoria.nome} já existe")
 
     def get_categoria_id(self, id: int):
         repository = CategoriaRepository()
