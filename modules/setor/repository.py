@@ -1,9 +1,9 @@
 from core.db import DataBase
-from modules.setor.schemas import SetorCreate
+from modules.setor.schemas import SetorCreate, Setor
 
 
 class SetorRepository:
-    QUERY_SETORES = "SELECT nome FROM setores"
+    QUERY_SETORES = "SELECT id, nome, responsavel, ativo FROM setores"
     QUERY_SETOR_BY_ID = "SELECT nome FROM setores WHERE setores.id = (%s)"
     QUERY_CREATE_SETOR = "INSERT INTO setores VALUES (%s) RETURNING id"
     QUERY_PUT_SETOR = "UPDATE setores SET nome = (%s) WHERE setores.id = (%s)"
@@ -14,7 +14,7 @@ class SetorRepository:
         setores = db.execute(self.QUERY_SETORES)
         results = []
         for setor in setores:
-            results.append({"id": setor[0], "nome": setor[1], "responsavel": setor[2], "ativo": setor[3]})
+           results.append(Setor(id=setor[0], nome=setor[1], responsavel=setor[2], ativo=setor[3]))
         return results
 
     def get_id(self, id: int):

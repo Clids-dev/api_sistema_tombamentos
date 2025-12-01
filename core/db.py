@@ -22,12 +22,19 @@ class DataBase:
             port="5432"
         )
 
-    def execute(self, sql, many=True):
+    def execute(self, sql, params=None, many=True):
         cursor = self.conn.cursor()
-        cursor.execute(sql)
+
+        if params:
+            cursor.execute(sql, params)
+        else:
+            cursor.execute(sql)
+
         result = cursor.fetchall() if many else cursor.fetchone()
-        self.conn.close()
+
         cursor.close()
+        self.conn.close()
+
         return result
 
     def commit(self, sql, params=None):

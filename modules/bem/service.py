@@ -32,3 +32,14 @@ class BemService:
             return repository.delete(id)
         except errors.NoDataFound:
             raise HTTPException(status_code=404, detail=f"Categoria com id {id} não encontrada")
+
+    def get_by_codTomb(self, codigo_tombamento: str):
+        repository = BemRepository()
+        bem = repository.get_by_codTombamento(codigo_tombamento)
+        if not bem:
+            raise HTTPException(
+                status_code=404,
+                detail="Bem não encontrado com esse código de tombamento"
+            )
+
+        return bem

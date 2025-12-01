@@ -82,13 +82,13 @@ INSERT INTO setores (nome, responsavel, ativo) VALUES
 -- 4. Inserindo Bens (Patrimônio)
 -- Note que os status devem respeitar a restrição CHECK criada anteriormente
 INSERT INTO bens (nome, codigo_tombamento, valor, status, ativo) VALUES
-('Notebook Dell Latitude', 'TB-00100', 4500.00, 'em_uso', TRUE),
-('Monitor LG 24pol', 'TB-00101', 850.00, 'em_uso', TRUE),
-('Cadeira Ergonômica', 'TB-00200', 600.00, 'em_estoque', TRUE),
-('Mesa de Reunião', 'TB-00201', 1200.00, 'em_uso', TRUE),
-('Projetor Epson', 'TB-00300', 2500.00, 'em_manutencao', TRUE),
-('Carro Fiat Fiorino', 'TB-00400', 55000.00, 'em_uso', TRUE),
-('Teclado Antigo', 'TB-99999', 50.00, 'descartado', FALSE);
+('Notebook Dell Latitude', 'TMB-00100', 4500.00, 'em_uso', TRUE),
+('Monitor LG 24pol', 'TMB-00101', 850.00, 'em_uso', TRUE),
+('Cadeira Ergonômica', 'TMB-00200', 600.00, 'em_estoque', TRUE),
+('Mesa de Reunião', 'TMB-00201', 1200.00, 'em_uso', TRUE),
+('Projetor Epson', 'TMB-00300', 2500.00, 'em_manutencao', TRUE),
+('Carro Fiat Fiorino', 'TMB-00400', 55000.00, 'em_uso', TRUE),
+('Teclado Antigo', 'TMB-99999', 50.00, 'descartado', FALSE);
 
 -- 5. Inserindo Movimentações
 -- Estamos assumindo os IDs gerados sequencialmente (1, 2, 3...) pelas inserções acima.

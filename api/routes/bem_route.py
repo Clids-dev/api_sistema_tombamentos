@@ -43,3 +43,8 @@ def delete_bem(id: int):
         }
     except HTTPException as e:
         raise e
+
+@router.get("/buscar", response_model=schemas.Bem)
+def buscar_bem_por_codigo(codigo_tombamento: str):
+    service = BemService()
+    return service.get_by_codTomb(codigo_tombamento)

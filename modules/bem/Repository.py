@@ -9,7 +9,7 @@ class BemRepository(DataBase):
                         'VALUES (%s, %s, %s, %s, %s) RETURNING id;')
     QUERY_PUT_BEM = "UPDATE bens SET nome = %s, status = %s WHERE bens.id = %s RETURNING id, nome, codigo_tombamento, valor, status, ativo"""
     QUERY_DELETE_BEM = """UPDATE bens SET ativo = FALSE WHERE bens.id = (%s) RETURNING id, nome, codigo_tombamento, valor, status, ativo"""
-
+    QUERY_BEM_CODTOMB = "SELECT id, nome, codigo_tombamento, valor, status, ativo FROM bens WHERE codigo_tombamento = %s"
 
     def get_all(self):
         db = DataBase()
@@ -65,3 +65,11 @@ class BemRepository(DataBase):
                 ativo=bem[5]
             )
         return None
+
+    def get_by_codTombamento(self, codigo_tombamento: str):
+        db = DataBase()
+        rows = db.execute(self.QUERY_BEM_CODTOMB, (codigo_tombamento,))
+        if not rows:
+            return None
+        row = rows[0]
+        return Bem(id=row[0], nome=row[1], codigo_tombamento=row[2], valor=row[3], status=row[4], ativo=row[5])
