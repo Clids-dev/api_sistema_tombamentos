@@ -6,7 +6,7 @@ class SetorRepository:
     QUERY_SETORES = "SELECT nome FROM setores"
     QUERY_SETOR_BY_ID = "SELECT nome FROM setores WHERE setores.id = (%s)"
     QUERY_CREATE_SETOR = "INSERT INTO setores VALUES (%s) RETURNING id"
-    QUERY_PUT_SETOR = "UPDATE setores SET name = (%s) WHERE setores.id = (%s)"
+    QUERY_PUT_SETOR = "UPDATE setores SET nome = (%s) WHERE setores.id = (%s)"
     QUERY_DELETE_SETOR = "UPDATE setores SET ativo = FALSE WHERE setores.id = (%s)"
 
     def get_all(self):

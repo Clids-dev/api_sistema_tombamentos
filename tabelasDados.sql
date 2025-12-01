@@ -1,6 +1,6 @@
 -- 1. Limpeza (Opcional: remove as tabelas se já existirem para recriar do zero)
-DROP TABLE IF EXISTS movimentacao;
-DROP TABLE IF EXISTS bem;
+DROP TABLE IF EXISTS movimentacoes;
+DROP TABLE IF EXISTS bens;
 DROP TABLE IF EXISTS setores;
 DROP TABLE IF EXISTS categorias;
 DROP TABLE IF EXISTS responsaveis;
@@ -33,7 +33,7 @@ CREATE TABLE setores (
 
 -- 5. Criação da tabela Bem
 -- (Inclui restrição CHECK para garantir que o status seja válido)
-CREATE TABLE bem (
+CREATE TABLE bens (
     nome VARCHAR(200) NOT NULL,
     codigo_tombamento VARCHAR(50) NOT NULL UNIQUE,
     id SERIAL PRIMARY KEY,
@@ -46,9 +46,9 @@ CREATE TABLE bem (
 
 -- 6. Criação da tabela Movimentacao
 -- (Depende das tabelas Bem e Setor)
-CREATE TABLE movimentacao (
+CREATE TABLE movimentacoes (
     id SERIAL PRIMARY KEY,
-    bem_id INTEGER NOT NULL REFERENCES bem(id),
+    bem_id INTEGER NOT NULL REFERENCES bens(id),
     setor_origem_id INTEGER REFERENCES setores(id), -- Pode ser nulo se for a primeira entrada
     setor_destino_id INTEGER NOT NULL REFERENCES setores(id),
     data TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -81,7 +81,7 @@ INSERT INTO setores (nome, responsavel, ativo) VALUES
 
 -- 4. Inserindo Bens (Patrimônio)
 -- Note que os status devem respeitar a restrição CHECK criada anteriormente
-INSERT INTO bem (nome, codigo_tombamento, valor, status, ativo) VALUES
+INSERT INTO bens (nome, codigo_tombamento, valor, status, ativo) VALUES
 ('Notebook Dell Latitude', 'TB-00100', 4500.00, 'em_uso', TRUE),
 ('Monitor LG 24pol', 'TB-00101', 850.00, 'em_uso', TRUE),
 ('Cadeira Ergonômica', 'TB-00200', 600.00, 'em_estoque', TRUE),
@@ -93,7 +93,7 @@ INSERT INTO bem (nome, codigo_tombamento, valor, status, ativo) VALUES
 -- 5. Inserindo Movimentações
 -- Estamos assumindo os IDs gerados sequencialmente (1, 2, 3...) pelas inserções acima.
 -- Exemplo: Bem ID 1 (Notebook) saiu do Setor 3 (Almoxarifado) para Setor 1 (TI)
-INSERT INTO movimentacao (bem_id, setor_origem_id, setor_destino_id, data, ativo) VALUES
+INSERT INTO movimentacoes (bem_id, setor_origem_id, setor_destino_id, data, ativo) VALUES
 (1, 3, 1, '2023-10-01 08:30:00', TRUE),  -- Notebook foi para TI
 (2, 3, 1, '2023-10-01 08:35:00', TRUE),  -- Monitor foi para TI
 (3, NULL, 3, '2023-09-15 10:00:00', TRUE), -- Cadeira chegou direto no Almoxarifado (Origem NULL)

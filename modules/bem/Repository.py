@@ -2,13 +2,12 @@ from core.db import DataBase
 from modules.bem.schemas import BemCreate
 
 class BemRepository(DataBase):
-    QUERY_BENS = "SELECT id, name, codigo_tombamento, valor, status, ativo FROM bem"
-    QUERY_BEM_ID = "SELECT id, name, codigo_tombamento, valor, status, ativo FROM bem WHERE id = %s"
-    QUERY_CREATE_BEM = ('INSERT INTO bem (nome, codigo_tombamento, valor, status, ativo) '
+    QUERY_BENS = "SELECT id, nome, codigo_tombamento, valor, status, ativo FROM bens"
+    QUERY_BEM_ID = "SELECT id, nome, codigo_tombamento, valor, status, ativo FROM bens WHERE id = %s"
+    QUERY_CREATE_BEM = ('INSERT INTO bens (nome, codigo_tombamento, valor, status, ativo) '
                         'VALUES (%s, %s, %s, %s, %s) RETURNING id;')
 
     def get_all(self):
-        print('AQUIIIIIIIIII')
         db = DataBase()
         bens = db.execute(BemRepository.QUERY_BENS)
         results = []
