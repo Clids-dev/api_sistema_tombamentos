@@ -16,11 +16,15 @@ class CategoriaService:
     def create_categoria(self, categoria: CategoriaCreate):
         try:
             repository = CategoriaRepository()
+            if categoria.nome.strip() == "":
+                raise HTTPException(status_code=400, detail="O nome da categoria não pode ser vazio")
             return repository.save(categoria)
         except errors.UniqueViolation:
             raise HTTPException(status_code=409, detail=f"Categoria {categoria.nome} já existe")
 
     def get_categoria_id(self, id: int):
+        if not self.repository.get_id(id):
+            raise HTTPException(status_code=404, detail=f"Categoria com id {id} não encontrada")
         repository = CategoriaRepository()
         categoria = repository.get_id(id)
         return categoria
