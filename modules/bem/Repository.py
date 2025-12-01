@@ -24,6 +24,9 @@ class BemRepository(DataBase):
                            WHERE m.setor_destino_id = %s
                              AND b.ativo = TRUE
                            """
+    QUERY_DESATIVAR = "UPDATE bens SET ativo = false WHERE id = %s RETURNING id"
+    QUERY_REATIVAR = "UPDATE bens SET ativo = true  WHERE id = %s RETURNING id"
+
 
     def get_all(self):
         db = DataBase()
@@ -120,3 +123,11 @@ class BemRepository(DataBase):
                 )
             )
         return results
+
+    def desativar(self, bem_id: int):
+        db = DataBase()
+        return db.commit(self.QUERY_DESATIVAR, (bem_id,))
+
+    def reativar(self, bem_id: int):
+        db = DataBase()
+        return db.commit(self.QUERY_REATIVAR, (bem_id,))

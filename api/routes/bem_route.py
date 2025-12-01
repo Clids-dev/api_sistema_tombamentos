@@ -59,3 +59,14 @@ def get_historico_by_bem_id(id: int):
 def listar_bens_por_setor(setor_id: int):
     service = BemService()
     return service.get_por_setor(setor_id)
+
+@router.post("/{id}/desativar")
+def desativar_bem(id: int):
+    service = BemService()
+    return service.desativar_bem(id)
+
+
+@router.post("/{id}/reativar")
+def reativar_bem(id: int):
+    service = BemService()
+    return service.reativar_bem(id)

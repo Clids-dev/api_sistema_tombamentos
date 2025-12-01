@@ -69,3 +69,33 @@ class BemService:
             raise HTTPException(status_code=500, detail=f"Erro ao buscar bens por setor: {str(e)}")
 
         return bens
+
+    def desativar_bem(self, bem_id: int):
+        repo = BemRepository()
+
+        bem = repo.get_by_id(bem_id)
+        if not bem:
+            raise HTTPException(404, "Bem não encontrado")
+
+        repo.desativar(bem_id)
+
+        return {
+            "id": bem_id,
+            "ativo": False,
+            "message": "Bem desativado"
+        }
+
+    def reativar_bem(self, bem_id: int):
+        repo = BemRepository()
+
+        bem = repo.get_by_id(bem_id)
+        if not bem:
+            raise HTTPException(404, "Bem não encontrado")
+
+        repo.reativar(bem_id)
+
+        return {
+            "id": bem_id,
+            "ativo": True,
+            "message": "Bem reativado"
+        }
