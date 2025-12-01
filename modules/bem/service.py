@@ -25,3 +25,10 @@ class BemService:
             raise HTTPException(status_code=404, detail=f"Bem com id {id} não encontrada")
         except errors.UniqueViolation:
             raise HTTPException(status_code=409, detail=f"Bem {novo_nome} já existe")
+
+    def delete_bem(self, id: int):
+        try:
+            repository = BemRepository()
+            return repository.delete(id)
+        except errors.NoDataFound:
+            raise HTTPException(status_code=404, detail=f"Categoria com id {id} não encontrada")

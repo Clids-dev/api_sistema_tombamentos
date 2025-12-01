@@ -1,5 +1,5 @@
 from core.db import DataBase
-from modules.bem.schemas import BemCreate, Bem, BemUpdate
+from modules.bem.schemas import BemCreate, Bem
 
 
 class BemRepository(DataBase):
@@ -8,6 +8,8 @@ class BemRepository(DataBase):
     QUERY_CREATE_BEM = ('INSERT INTO bens (nome, codigo_tombamento, valor, status, ativo) '
                         'VALUES (%s, %s, %s, %s, %s) RETURNING id;')
     QUERY_PUT_BEM = "UPDATE bens SET nome = %s, status = %s WHERE bens.id = %s RETURNING id, nome, codigo_tombamento, valor, status, ativo"""
+    QUERY_DELETE_BEM = """UPDATE bens SET ativo = FALSE WHERE bens.id = (%s) RETURNING id, nome, codigo_tombamento, valor, status, ativo"""
+
 
     def get_all(self):
         db = DataBase()
@@ -38,6 +40,21 @@ class BemRepository(DataBase):
         db = DataBase()
         query = self.QUERY_PUT_BEM
         bem = db.commit(query, (novo_nome, novo_status, id))
+        if bem:
+            return Bem(
+                id=bem[0],
+                nome=bem[1],
+                codigo_tombamento=bem[2],
+                valor=bem[3],
+                status=bem[4],
+                ativo=bem[5]
+            )
+        return None
+
+    def delete(self, id: int):
+        db = DataBase()
+        query = self.QUERY_DELETE_BEM % id
+        bem = db.commit(query, id)
         if bem:
             return Bem(
                 id=bem[0],
