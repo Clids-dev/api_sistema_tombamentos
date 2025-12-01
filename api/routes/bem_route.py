@@ -10,6 +10,11 @@ from modules.bem.service import BemService
 
 router = APIRouter(prefix="/bem", tags=["Bem"])
 
+@router.post("/", response_model=schemas.Bem)
+def add_bem(bem: BemCreate):
+    service = BemService()
+    return service.create_bem(bem)
+
 @router.get("/", response_model=list[schemas.Bem])
 def get_bens():
     service = BemService()
@@ -20,7 +25,3 @@ def get_bem_by_id(id: int):
     service = BemService()
     return service.get_bem_by_id(id)
 
-@router.post("/", response_model=list[schemas.Bem])
-def add_bem(bem: BemCreate):
-    service = BemService()
-    return service.create_bem(bem)
