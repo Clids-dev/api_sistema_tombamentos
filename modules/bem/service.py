@@ -43,3 +43,29 @@ class BemService:
             )
 
         return bem
+
+    def get_historico_by_bem(self, bem_id: int):
+        if not isinstance(bem_id, int) or bem_id <= 0:
+            raise HTTPException(status_code=400, detail="ID do bem inválido.")
+
+        repository = BemRepository()
+
+        try:
+            historico = repository.get_historico_by_bem(bem_id)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erro ao obter histórico: {str(e)}")
+
+        return historico
+
+    def get_por_setor(self, setor_id: int):
+        if not isinstance(setor_id, int) or setor_id <= 0:
+            raise HTTPException(status_code=400, detail="ID do setor inválido.")
+
+        repository = BemRepository()
+
+        try:
+            bens = repository.get_bens_por_setor(setor_id)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erro ao buscar bens por setor: {str(e)}")
+
+        return bens

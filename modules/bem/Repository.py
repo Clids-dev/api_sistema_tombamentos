@@ -1,5 +1,6 @@
 from core.db import DataBase
 from modules.bem.schemas import BemCreate, Bem
+from modules.movimentacao.schemas import Movimentacao
 
 
 class BemRepository(DataBase):
@@ -10,14 +11,26 @@ class BemRepository(DataBase):
     QUERY_PUT_BEM = "UPDATE bens SET nome = %s, status = %s WHERE bens.id = %s RETURNING id, nome, codigo_tombamento, valor, status, ativo"""
     QUERY_DELETE_BEM = """UPDATE bens SET ativo = FALSE WHERE bens.id = (%s) RETURNING id, nome, codigo_tombamento, valor, status, ativo"""
     QUERY_BEM_CODTOMB = "SELECT id, nome, codigo_tombamento, valor, status, ativo FROM bens WHERE codigo_tombamento = %s"
+    QUERY_HISTORICO = """SELECT id, bem_id, setor_origem_id, setor_destino_id, data, ativo FROM movimentacoes 
+                       WHERE id = %s ORDER BY data DESC"""
+
+    QUERY_BENS_POR_SETOR = """
+                           SELECT b.id, b.nome, b.codigo_tombamento,b.valor, b.status, b.ativo, b.status
+                           FROM bens b
+                                    JOIN (SELECT DISTINCT ON (bem_id) bem_id, 
+                                          setor_destino_id FROM movimentacoes 
+                                          WHERE ativo = TRUE
+                                          ORDER BY bem_id, data DESC) m ON m.bem_id = b.id
+                           WHERE m.setor_destino_id = %s
+                             AND b.ativo = TRUE
+                           """
 
     def get_all(self):
         db = DataBase()
-        rows = db.execute(BemRepository.QUERY_BENS)
+        rows = db.execute(self.QUERY_BENS)
         results = []
         if not rows:
             return results
-
         for row in rows:
             (results.append(Bem(id=row[0], nome=row[1], codigo_tombamento=row[2], valor=row[3], status=row[4], ativo=row[5])))
         return results
@@ -62,7 +75,7 @@ class BemRepository(DataBase):
                 codigo_tombamento=bem[2],
                 valor=bem[3],
                 status=bem[4],
-                ativo=bem[5]
+                ativo=False
             )
         return None
 
@@ -73,3 +86,37 @@ class BemRepository(DataBase):
             return None
         row = rows[0]
         return Bem(id=row[0], nome=row[1], codigo_tombamento=row[2], valor=row[3], status=row[4], ativo=row[5])
+
+    def get_historico_by_bem(self, id: int):
+        db = DataBase()
+        rows = db.execute(self.QUERY_HISTORICO, (id,))
+        results = []
+        for row in rows:
+            results.append(
+                Movimentacao(
+                    id=row[0],
+                    bem_id=row[1],
+                    setor_origem_id=row[2],
+                    setor_destino_id=row[3],
+                    data=row[4],
+                    ativo=bool(row[5])
+                )
+            )
+        return results
+
+    def get_bens_por_setor(self, setor_id: int):
+        db = DataBase()
+        rows = db.execute(self.QUERY_BENS_POR_SETOR, (setor_id,))
+        results = []
+        for row in rows:
+            results.append(
+                Bem(
+                    id=row[0],
+                    nome=row[1],
+                    codigo_tombamento=row[2],
+                    valor=row[3],
+                    status=row[4],
+                    ativo=bool(row[5])
+                )
+            )
+        return results
