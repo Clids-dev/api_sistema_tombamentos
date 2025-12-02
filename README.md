@@ -251,7 +251,9 @@ GET /relatorios/bens-ativos-por-status
 ## Equipe
 
 **José Euclides H Barros**
+
 **Pedro Henrique do Santos**
+
 **Guilherme Henrique M. G. Santana**
 
 Desenvolvedores do projeto *Sistema de Tombamento*.
