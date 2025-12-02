@@ -1,3 +1,5 @@
+
+
 from pydantic import BaseModel
 
 class Bem(BaseModel):
@@ -18,3 +20,4 @@ class BemDeleteResponse(BaseModel):
     message: str
     id: int
     ativo: bool
+

@@ -32,3 +32,74 @@ class BemService:
             return repository.delete(id)
         except errors.NoDataFound:
             raise HTTPException(status_code=404, detail=f"Categoria com id {id} não encontrada")
+
+    def get_by_codTomb(self, codigo_tombamento: str):
+        repository = BemRepository()
+        bem = repository.get_by_codTombamento(codigo_tombamento)
+        if not bem:
+            raise HTTPException(
+                status_code=404,
+                detail="Bem não encontrado com esse código de tombamento"
+            )
+
+        return bem
+
+    def get_historico_by_bem(self, bem_id: int):
+        if not isinstance(bem_id, int) or bem_id <= 0:
+            raise HTTPException(status_code=400, detail="ID do bem inválido.")
+
+        repository = BemRepository()
+
+        try:
+            historico = repository.get_historico_by_bem(bem_id)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erro ao obter histórico: {str(e)}")
+
+        return historico
+
+    def get_por_setor(self, setor_id: int):
+        if not isinstance(setor_id, int) or setor_id <= 0:
+            raise HTTPException(status_code=400, detail="ID do setor inválido.")
+
+        repository = BemRepository()
+
+        try:
+            bens = repository.get_bens_por_setor(setor_id)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erro ao buscar bens por setor: {str(e)}")
+
+        return bens
+
+    def desativar_bem(self, bem_id: int):
+        repo = BemRepository()
+
+        bem = repo.get_by_id(bem_id)
+        if not bem:
+            raise HTTPException(404, "Bem não encontrado")
+
+        repo.desativar(bem_id)
+
+        return {
+            "id": bem_id,
+            "ativo": False,
+            "message": "Bem desativado"
+        }
+
+    def reativar_bem(self, bem_id: int):
+        repo = BemRepository()
+
+        bem = repo.get_by_id(bem_id)
+        if not bem:
+            raise HTTPException(404, "Bem não encontrado")
+
+        repo.reativar(bem_id)
+
+        return {
+            "id": bem_id,
+            "ativo": True,
+            "message": "Bem reativado"
+        }
+
+    def bens_ativos_por_status(self):
+        repository = BemRepository()
+        return repository.relatorio_bens_ativos_por_status()
