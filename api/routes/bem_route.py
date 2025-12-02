@@ -20,7 +20,17 @@ def get_bem_by_id(id: int):
     service = BemService()
     return service.get_bem_by_id(id)
 
-@router.post("/", response_model=list[schemas.Bem])
+@router.post("/", response_model=schemas.BemCreate)
 def add_bem(bem: BemCreate):
     service = BemService()
     return service.create_bem(bem)
+
+@router.put("/{id}")
+def update_bem(id: int, novo_nome: str, novo_status: str):
+    service = BemService()
+    return service.put_bem(id, novo_nome, novo_status)
+
+@router.delete("/")
+def delete_bem(id: int):
+    service = BemService()
+    return service.delete_bem(id)
