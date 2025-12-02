@@ -99,3 +99,7 @@ class BemService:
             "ativo": True,
             "message": "Bem reativado"
         }
+
+    def bens_ativos_por_status(self):
+        repository = BemRepository()
+        return repository.relatorio_bens_ativos_por_status()
