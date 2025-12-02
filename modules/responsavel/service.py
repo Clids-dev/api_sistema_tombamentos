@@ -52,11 +52,10 @@ class ResponsavelService:
             if (novo_nome == repository.get_id(id).nome and novo_cargo == ""):
                 raise ValueError
             if novo_nome == "":
-                return repository.put(id, novo_nome=repository.get_id(id).nome, novo_cargo=novo_cargo)
+                novo_nome = repository.get_id(id).nome
             if novo_cargo == "":
-                return repository.put(id, novo_nome=novo_nome, novo_cargo=repository.get_id(id).cargo)
-            if novo_nome and novo_cargo:
-                return repository.put(id, novo_nome, novo_cargo)
+                novo_cargo = repository.get_id(id).cargo
+            return repository.put(id, novo_nome, novo_cargo)
         except ValueError:
             raise HTTPException(status_code=400, detail="Os novos dados são iguais aos dados atuais do responsável.")
 
