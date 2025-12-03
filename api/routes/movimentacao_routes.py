@@ -5,6 +5,7 @@ from fastapi import APIRouter
 from modules.movimentacao.schemas import Movimentacao
 from modules.movimentacao.schemas import MovimentacaoCreate
 from modules.movimentacao.service import MovimentacaoService
+from modules.movimentacao import schemas
 
 router = APIRouter(prefix="/movimentacao", tags=["Movimentacao"])
 
@@ -26,7 +27,7 @@ def add_movimentacao(movimentacao: MovimentacaoCreate):
 @router.put("/{id}")
 def update_movimentacao(id: int, data: datetime, setor_destino_id, justificativa: str):
     service = MovimentacaoService()
-    return service.put_movimentacao(id, data, setor_destino_id, justificativa)
+    return service.put_movimentacao(id, data, setor_destino_id)
 
 @router.delete("/")
 def delete_movimentacao(id: int):
