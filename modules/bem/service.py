@@ -1,3 +1,5 @@
+from fastapi import HTTPException
+
 from modules.bem.Repository import BemRepository
 from modules.bem.schemas import BemCreate
 
@@ -10,8 +12,15 @@ class BemService:
         return repository.get_all()
 
     def get_bem_by_id(self, id: int):
-        repository = BemRepository()
-        return repository.get_by_id(id)
+        try:
+            repository = BemRepository()
+            if id == "":
+                raise ValueError("ID do bem não pode ser vazio.")
+            if repository.get_id(id) is None:
+                raise ValueError("Nenhum bem encontrado.")
+            return repository.get_id(id)
+        except ValueError as e:
+            raise HTTPException(status_code=404, detail=str(e))
 
     def create_bem(self, bem : BemCreate):
         repository = BemRepository()

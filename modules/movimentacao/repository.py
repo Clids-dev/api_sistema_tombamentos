@@ -15,6 +15,7 @@ class MovimentacaoRepository():
                                 AND ativo = TRUE RETURNING id, bem_id, setor_origem_id, setor_destino_id, data; """
     QUERY_DELETE_MOVIMENTACAO = """UPDATE movimentacoes SET ativo = FALSE WHERE id = %s RETURNING id;"""
 
+    #eu tive q fazer um tratamento especial pq o banco ta retornando arrays em vez de inteiros simples
     def get_all(self):
         db = DataBase()
         rows = db.execute(self.QUERY_MOVIMENTACOES)
@@ -40,7 +41,7 @@ class MovimentacaoRepository():
         result = db.commit(query, (movimentacao.bem_id, movimentacao.setor_origem_id, movimentacao.setor_destino_id, True))
         return Movimentacao(id=result[0], bem_id=result[1], setor_origem_id=result[2], setor_destino_id=result[3], data=result[4], ativo=result[5])
 
-    def put(self, id: int, data: datetime, setor_origem_id: int):
+    def put(self, id: int, data: datetime, setor_origem_id: int, justificativa: str):
         db = DataBase()
         query = self.QUERY_PUT_MOVIMENTACAO
         movimentacao = db.commit(query, (data, setor_origem_id, id))
@@ -57,6 +58,7 @@ class MovimentacaoRepository():
 
     def delete(self, id: int):
         db = DataBase()
+        result = self.get_id(id)
         query = self.QUERY_DELETE_MOVIMENTACAO % id
         movimentacao = db.commit(query, id)
         if movimentacao:
