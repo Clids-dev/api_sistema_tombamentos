@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from fastapi import APIRouter
 from modules.movimentacao.schemas import Movimentacao
@@ -12,12 +13,12 @@ def get_movimentacoes():
     service = MovimentacaoService()
     return service.get_movimentacoes()
 
-@router.get("/{id}/", response_model=Movimentacao)
+@router.get("/{id}/", response_model=Optional[schemas.Movimentacao])
 def get_movimentacao_by_id(id: int):
     service = MovimentacaoService()
     return service.get_movimentacao_by_id(id)
 
-@router.post("/", response_model=MovimentacaoCreate)
+@router.post("/", response_model=schemas.Movimentacao)
 def add_movimentacao(movimentacao: MovimentacaoCreate):
     service = MovimentacaoService()
     return service.add_movimentacao(movimentacao)

@@ -1,208 +1,186 @@
-# Sistema de Tombamento — Modelo de Dados e API
 
-Documento padrão para projetos FBD (2025.2). Este guia descreve **modelo de dados**, **endpoints CRUD (onde o D = desativar)** e **endpoints específicos**. Os exemplos são em JSON. **Todos os QueryParams em requisições GET são opcionais.** Removidos paginação e ordenação para simplificar.
+# Sistema de Tombamento – API e Modelo de Dados
+
+Este documento descreve o projeto **Sistema de Tombamento**, desenvolvido em FastAPI, incluindo **modelo de dados**, **endpoints CRUD**, **endpoints específicos**, **requisitos**, **instalação**, **execução** e **fluxo geral do sistema**.
 
 ---
 
-# Requisitos para o projeto:
-1.Criar e ativar o ambiente virtual:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # No Linux/Mac
-   # ou
-   venv\Scripts\activate  # No Windows
-   ```
-2.  Instalar as dependecias:
-   Instale as dependências:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Executar o projeto:
-1. Certifique-se de que o ambiente virtual está ativado
+# 1. Requisitos para o projeto
+
+## 1. Criar e ativar o ambiente virtual:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate     # Linux/Mac
+# ou
+venv\Scripts\activate        # Windows
+```
+
+## 2. Instalar as dependências:
+
+```bash
+pip install -r requirements.txt
+```
+
+## 3. Executar o projeto:
+
+1. Certifique-se de que o ambiente virtual está ativo.
 2. Execute o servidor de desenvolvimento:
-   ```bash
-   uvicorn main:app --reload
-   ```
 
+```bash
+uvicorn main:app --reload
+```
 
+A API ficará disponível em:
 
-## 1) Texto padrão (para reutilização em outros projetos)
-1. **Coluna `ativo`**: todo recurso possui um campo booleano `ativo` (default: `true`). Operações de “exclusão” apenas marcam `ativo = false`.
-2. **CRUD**:
-   - **POST** cria um registro ativo.
-   - **GET** lista/detalha; filtros via QueryParams **opcionais**.
-   - **PUT/PATCH** atualiza campos do registro.
-   - **DELETE** = **desativar** (soft delete: `ativo = false`).
-3. **Respostas**: retornar objeto salvo/atualizado ou mensagem de confirmação.
-4. **Erros comuns**: 400 (validação), 404 (não encontrado), 409 (conflito – ex.: `codigo_tombamento` já usado), 422 (semântica), 500 (erro interno).
-5. **Datas**: usar ISO 8601 (`YYYY-MM-DD` ou `YYYY-MM-DDTHH:mm:ssZ`).
-6. **IDs**: inteiros auto-incrementais.
+```
+http://127.0.0.1:8000
+```
 
-> Este texto-padrão pode ser copiado para outros projetos mudando apenas as entidades e os endpoints específicos.
+Documentação automática:
+
+```
+/docs
+/redoc
+```
 
 ---
 
-## 2) Modelo de Dados (Tabelas)
+# 2. Modelo de Dados (Tabelas)
 
-### 1.1) Bem
-Campos: `id`, `nome`, `codigo_tombamento` (único), `valor` (decimal), `status` (ex.: `em_uso`, `em_estoque`, `descartado`, `em_manutencao`), `ativo` (bool).
+## 2.1 Bem
 
-### 1.2) Categoria
-Campos: `id`, `nome` (único), `ativo` (bool).
+* id
+* nome
+* codigo_tombamento (único)
+* valor
+* status
+* ativo
 
-### 1.3) Setor
-Campos: `id`, `nome` (único), `responsavel` (texto livre), `ativo` (bool).
+## 2.2 Categoria
 
-> Observação: existe também a tabela **Responsavel** (pessoa) abaixo; o campo texto `responsavel` no **Setor** é mantido para simplicidade, mas a associação formal a pessoas ocorre via tabela **Responsavel**.
+* id
+* nome
+* ativo
 
-### 1.4) Movimentacao
-Campos: `id`, `bem_id`, `setor_origem_id`, `setor_destino_id`, `data` (data/hora), `ativo` (bool).
+## 2.3 Setor
 
-### 1.5) Responsavel
-Campos: `id`, `nome`, `cargo`, `ativo` (bool).
+* id
+* nome
+* responsavel
+* ativo
+
+## 2.4 Responsável
+
+* id
+* nome
+* cargo
+* ativo
+
+## 2.5 Movimentação
+
+* id
+* bem_id
+* setor_origem_id
+* setor_destino_id
+* data
+* ativo
 
 ---
 
-## 3) Endpoints CRUD
+# 3. Endpoints CRUD
 
-### 2.1) Bens
-**Base**: `/bens`
+## 3.1 Bens
 
-#### POST `/bens`
-Cria um bem.
-Body (JSON):
+Base: `/bens`
+
+### POST /bens
+
 ```json
 {
   "nome": "Notebook Dell 15",
   "codigo_tombamento": "TMB-2025-0001",
-  "valor": 5200.00,
+  "valor": 5200,
   "status": "em_uso"
 }
 ```
-Resposta 201:
-```json
-{
-  "id": 1,
-  "nome": "Notebook Dell 15",
-  "codigo_tombamento": "TMB-2025-0001",
-  "valor": 5200.00,
-  "status": "em_uso",
-  "ativo": true
-}
-```
 
-#### GET `/bens`
-Lista bens com **QueryParams opcionais**: `nome`, `codigo_tombamento`, `status`, `ativo` (true/false), `valor_min`, `valor_max`.
-Exemplo: `/bens?status=em_uso&valor_max=6000`
-Resposta 200:
-```json
-[
-  { "id": 1, "nome": "Notebook Dell 15", "codigo_tombamento": "TMB-2025-0001", "valor": 5200.00, "status": "em_uso", "ativo": true }
-]
-```
+### GET /bens
 
-#### GET `/bens/{id}`
-Detalha um bem.
-Resposta 200:
-```json
-{ "id": 1, "nome": "Notebook Dell 15", "codigo_tombamento": "TMB-2025-0001", "valor": 5200.00, "status": "em_uso", "ativo": true }
-```
+QueryParams opcionais: nome, codigo_tombamento, status, ativo, valor_min, valor_max.
 
-#### PUT `/bens/{id}`
-Atualiza campos do bem.
-Body (JSON):
-```json
-{ "nome": "Notebook Dell 15 3520", "status": "em_manutencao" }
-```
-Resposta 200: objeto atualizado.
+### GET /bens/{id}
 
-#### DELETE `/bens/{id}` (Desativar)
-Marca `ativo = false`.
-Resposta 200:
-```json
-{ "message": "Bem desativado com sucesso", "id": 1, "ativo": false }
-```
+### PUT /bens/{id}
+
+### DELETE /bens/{id}
+
+Soft delete (ativo = false)
 
 ---
 
-### 2.2) Categorias
-**Base**: `/categorias`
+## 3.2 Categorias
 
-#### POST `/categorias`
-Body:
+Base: `/categorias`
+
+### POST /categorias
+
 ```json
 { "nome": "Informática" }
 ```
 
-#### GET `/categorias`
-QueryParams (opcionais): `nome`, `ativo`.
+### GET /categorias
 
-#### GET `/categorias/{id}`
+### GET /categorias/{id}
 
-#### PUT `/categorias/{id}`
-Body:
-```json
-{ "nome": "Informática e Periféricos" }
-```
+### PUT /categorias/{id}
 
-#### DELETE `/categorias/{id}` (Desativar)
+### DELETE /categorias/{id}
 
 ---
 
-### 2.3) Setores
-**Base**: `/setores`
+## 3.3 Setores
 
-#### POST `/setores`
-Body:
+Base: `/setores`
+
+### POST /setores
+
 ```json
 { "nome": "TI", "responsavel": "Coord. de TI" }
 ```
 
-#### GET `/setores`
-QueryParams: `nome`, `responsavel`, `ativo`.
+### GET /setores
 
-#### GET `/setores/{id}`
+### GET /setores/{id}
 
-#### PUT `/setores/{id}`
-Body:
-```json
-{ "responsavel": "Gerência de TI" }
-```
+### PUT /setores/{id}
 
-#### DELETE `/setores/{id}` (Desativar)
+### DELETE /setores/{id}
 
 ---
 
-### 2.4) Responsáveis
-**Base**: `/responsaveis`
+## 3.4 Responsáveis
 
-#### POST `/responsaveis`
-Body:
-```json
-{ "nome": "Ana Lima", "cargo": "Analista" }
-```
+Base: `/responsaveis`
 
-#### GET `/responsaveis`
-QueryParams: `nome`, `cargo`, `ativo`.
+### POST /responsaveis
 
-#### GET `/responsaveis/{id}`
+### GET /responsaveis
 
-#### PUT `/responsaveis/{id}`
-Body:
-```json
-{ "cargo": "Coordenadora" }
-```
+### GET /responsaveis/{id}
 
-#### DELETE `/responsaveis/{id}` (Desativar)
+### PUT /responsaveis/{id}
+
+### DELETE /responsaveis/{id}
 
 ---
 
-### 2.5) Movimentações
-**Base**: `/movimentacoes`
+## 3.5 Movimentações
 
-#### POST `/movimentacoes`
-Registra movimentação de um bem.
-Body:
+Base: `/movimentacoes`
+
+### POST /movimentacoes
+
 ```json
 {
   "bem_id": 1,
@@ -211,112 +189,73 @@ Body:
   "data": "2025-10-20T14:30:00Z"
 }
 ```
-Resposta 201: objeto criado.
 
-#### GET `/movimentacoes`
-QueryParams: `bem_id`, `setor_origem_id`, `setor_destino_id`, `data_inicio`, `data_fim`, `ativo`.
+### GET /movimentacoes
 
-#### GET `/movimentacoes/{id}`
+### GET /movimentacoes/{id}
 
-#### PUT `/movimentacoes/{id}`
-> Uso raro (em geral movimentações são imutáveis). Permita apenas corrigir `data` ou `setor_destino_id` com justificativa.
+### PUT /movimentacoes/{id}
 
-Body:
-```json
-{ "data": "2025-10-20T16:00:00Z" }
-```
-
-#### DELETE `/movimentacoes/{id}` (Desativar)
-> Não apaga o histórico; apenas invalida o registro.
+### DELETE /movimentacoes/{id}
 
 ---
 
-## 4) Endpoints Específicos
+# 4. Endpoints Específicos
 
-### 3.1) Buscar bem por código de tombamento
-`GET /bens/buscar?codigo_tombamento=TMB-2025-0001`
-Resposta 200:
-```json
-{ "id": 1, "nome": "Notebook Dell 15", "codigo_tombamento": "TMB-2025-0001", "status": "em_uso", "ativo": true }
+## 4.1 Buscar bem por código de tombamento
+
+```
+GET /bens/buscar?codigo_tombamento=XXXX
 ```
 
-### 3.2) Histórico de movimentações de um bem
-`GET /bens/{id}/historico-movimentacoes`
-Resposta 200:
-```json
-[
-  { "id": 10, "bem_id": 1, "setor_origem_id": 2, "setor_destino_id": 5, "data": "2025-10-20T14:30:00Z", "ativo": true }
-]
+## 4.2 Histórico de movimentações
+
+```
+GET /bens/{id}/historico-movimentacoes
 ```
 
-### 3.3) Listar bens por setor atual
-`GET /bens/por-setor?setor_id=5`
-> O “setor atual” é inferido pela **última movimentação ativa** do bem.
-Resposta 200:
-```json
-[
-  { "id": 1, "nome": "Notebook Dell 15", "codigo_tombamento": "TMB-2025-0001", "status": "em_uso", "ativo": true }
-]
+## 4.3 Listar bens por setor atual
+
+```
+GET /bens/por-setor?setor_id=5
 ```
 
-### 3.4) Desativar/reativar bem
-- `POST /bens/{id}/desativar`
-- `POST /bens/{id}/reativar`
+## 4.4 Transferência rápida
 
-Respostas 200:
-```json
-{ "id": 1, "ativo": false, "message": "Bem desativado" }
 ```
-```json
-{ "id": 1, "ativo": true, "message": "Bem reativado" }
+POST /bens/{id}/transferir
 ```
 
-### 3.5) Transferência rápida de setor (atalho de movimentação)
-`POST /bens/{id}/transferir`
-Body:
-```json
-{ "setor_destino_id": 7, "data": "2025-11-03T12:00:00Z" }
-```
-Resposta 201: retorna a **movimentação** criada.
+## 4.5 Relatório: bens ativos por status
 
-### 3.6) Relatório simples: bens ativos por status
-`GET /relatorios/bens-ativos-por-status`
-Resposta 200:
-```json
-[
-  { "status": "em_uso", "quantidade": 12 },
-  { "status": "em_manutencao", "quantidade": 3 },
-  { "status": "em_estoque", "quantidade": 8 }
-]
+```
+GET /relatorios/bens-ativos-por-status
 ```
 
 ---
 
-## 5) Exemplos de Fluxo
+# 5. Fluxo Geral do Sistema
 
-### 4.1) Cadastro e movimentação
-1) Cadastrar bem (POST `/bens`).
-2) Registrar movimentação (POST `/movimentacoes`).
-3) Listar bens por setor (GET `/bens/por-setor?setor_id=...`).
+## Cadastro + Movimentação
 
-### 4.2) Desativação
-1) Desativar bem (DELETE `/bens/{id}` ou POST `/bens/{id}/desativar`).
-2) Evitar retorno em listagens usando `ativo=true` em GET.
+1. Criar bem
+2. Registrar movimentação
+3. Consultar setor atual
 
----
+## Desativação
 
-## 6) Validações sugeridas
-- `codigo_tombamento` **único** e obrigatório.
-- `valor >= 0`.
-- `status` dentro do conjunto permitido.
-- `bem_id` e setores existentes ao registrar movimentação.
-- Ao transferir: `setor_destino_id` ≠ último setor atual.
+1. Desativar bem (DELETE ou endpoint específico)
+2. Filtrar listagens com `ativo=true`
 
----
 
-## 7) Observações finais
-- **GET: todos os QueryParams são opcionais.**
-- “Excluir” = desativar (`ativo = false`).
-- Histórico é preservado via **Movimentacao**.
-- Este documento é um **template**: troque nomes e campos para outros projetos mantendo a mesma lógica.
+## Equipe
+
+**José Euclides H Barros**
+
+**Pedro Henrique do Santos**
+
+**Guilherme Henrique M. G. Santana**
+
+Desenvolvedores do projeto *Sistema de Tombamento*.
+
 

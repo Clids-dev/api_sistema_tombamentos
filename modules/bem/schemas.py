@@ -1,3 +1,5 @@
+
+
 from pydantic import BaseModel
 
 class Bem(BaseModel):
@@ -13,3 +15,9 @@ class BemCreate(BaseModel):
     codigo_tombamento: str
     valor: float
     status: str
+
+class BemDeleteResponse(BaseModel):
+    message: str
+    id: int
+    ativo: bool
+

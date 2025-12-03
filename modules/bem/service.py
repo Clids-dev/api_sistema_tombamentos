@@ -3,6 +3,8 @@ from fastapi import HTTPException
 from modules.bem.Repository import BemRepository
 from modules.bem.schemas import BemCreate
 
+from psycopg2 import errors
+from fastapi import HTTPException
 
 class BemService:
     def get_bens(self):
@@ -21,43 +23,92 @@ class BemService:
             raise HTTPException(status_code=404, detail=str(e))
 
     def create_bem(self, bem : BemCreate):
-        try:
-            repository = BemRepository()
-            if bem.nome.strip() == "":
-                raise ValueError("Nome do bem não pode ser vazio.")
-            for b in repository.get_all():
-                if b.nome == bem.nome:
-                    raise FileExistsError("Bem já existente.")
-            return repository.save(bem)
-        except ValueError as e:
-            raise HTTPException(status_code=400, detail=str(e))
+        repository = BemRepository()
+        return repository.save(bem)
 
-    def put_bem(self, id: int, novo_nome: str, novo_status: str):
+    def put_bem(self, id: int, novo_nome: str, status: str):
         try:
             repository = BemRepository()
-            if self.get_bem_by_id(id) is None:
-                raise HTTPException(status_code=404, detail=f"Bem com id {id} não encontrado")
-            if novo_nome == "" and novo_status == "":
-                raise ValueError("Nenhum dado fornecido para atualização.")
-            if novo_nome == "":
-                novo_nome = self.get_bem_by_id(id).nome
-            if novo_status == "":
-                novo_status = self.get_bem_by_id(id).status
-            if novo_nome == self.get_bem_by_id(id).nome and novo_status == self.get_bem_by_id(id).status:
-                raise ValueError("Os dados fornecidos são iguais aos atuais.")
-            return repository.put(int(id), novo_nome, novo_status)
-        except ValueError as e:
-            raise HTTPException(status_code=400, detail=str(e))
-        except HTTPException as e:
-            raise e
+            return repository.put(id, novo_nome, status)
+        except errors.NoDataFound:
+            raise HTTPException(status_code=404, detail=f"Bem com id {id} não encontrada")
+        except errors.UniqueViolation:
+            raise HTTPException(status_code=409, detail=f"Bem {novo_nome} já existe")
 
     def delete_bem(self, id: int):
         try:
             repository = BemRepository()
-            if self.get_bem_by_id(id) is None:
-                raise HTTPException(status_code=404, detail=f"Bem com id {id} não encontrado")
-            if self.get_bem_by_id(id).ativo == False:
-                raise HTTPException(status_code=400, detail="Bem já está inativo.")
             return repository.delete(id)
-        except HTTPException as e:
-            raise e
+        except errors.NoDataFound:
+            raise HTTPException(status_code=404, detail=f"Categoria com id {id} não encontrada")
+
+    def get_by_codTomb(self, codigo_tombamento: str):
+        repository = BemRepository()
+        bem = repository.get_by_codTombamento(codigo_tombamento)
+        if not bem:
+            raise HTTPException(
+                status_code=404,
+                detail="Bem não encontrado com esse código de tombamento"
+            )
+
+        return bem
+
+    def get_historico_by_bem(self, bem_id: int):
+        if not isinstance(bem_id, int) or bem_id <= 0:
+            raise HTTPException(status_code=400, detail="ID do bem inválido.")
+
+        repository = BemRepository()
+
+        try:
+            historico = repository.get_historico_by_bem(bem_id)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erro ao obter histórico: {str(e)}")
+
+        return historico
+
+    def get_por_setor(self, setor_id: int):
+        if not isinstance(setor_id, int) or setor_id <= 0:
+            raise HTTPException(status_code=400, detail="ID do setor inválido.")
+
+        repository = BemRepository()
+
+        try:
+            bens = repository.get_bens_por_setor(setor_id)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erro ao buscar bens por setor: {str(e)}")
+
+        return bens
+
+    def desativar_bem(self, bem_id: int):
+        repo = BemRepository()
+
+        bem = repo.get_by_id(bem_id)
+        if not bem:
+            raise HTTPException(404, "Bem não encontrado")
+
+        repo.desativar(bem_id)
+
+        return {
+            "id": bem_id,
+            "ativo": False,
+            "message": "Bem desativado"
+        }
+
+    def reativar_bem(self, bem_id: int):
+        repo = BemRepository()
+
+        bem = repo.get_by_id(bem_id)
+        if not bem:
+            raise HTTPException(404, "Bem não encontrado")
+
+        repo.reativar(bem_id)
+
+        return {
+            "id": bem_id,
+            "ativo": True,
+            "message": "Bem reativado"
+        }
+
+    def bens_ativos_por_status(self):
+        repository = BemRepository()
+        return repository.relatorio_bens_ativos_por_status()
