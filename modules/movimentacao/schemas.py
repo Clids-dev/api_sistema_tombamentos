@@ -18,6 +18,7 @@ class MovimentacaoCreate(BaseModel):
     bem_id: int
     setor_origem_id: Optional[int] = None
     setor_destino_id: int
+    justificativa: Optional[str] = None
 
 class MovimentacaoUpdate(BaseModel):
     setor_destino_id: int

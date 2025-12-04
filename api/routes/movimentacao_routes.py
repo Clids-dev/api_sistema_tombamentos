@@ -25,9 +25,9 @@ def add_movimentacao(movimentacao: MovimentacaoCreate):
     return service.add_movimentacao(movimentacao)
 
 @router.put("/{id}")
-def update_movimentacao(id: int, data: datetime, setor_destino_id, justificativa: str):
+def update_movimentacao(id: int, data: datetime, setor_destino_id, justificativa: Optional[str] = None):
     service = MovimentacaoService()
-    return service.put_movimentacao(id, data, setor_destino_id)
+    return service.put_movimentacao(id, data, setor_destino_id, justificativa)
 
 @router.delete("/")
 def delete_movimentacao(id: int):

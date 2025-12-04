@@ -16,9 +16,9 @@ class BemService:
             repository = BemRepository()
             if id == "":
                 raise ValueError("ID do bem não pode ser vazio.")
-            if repository.get_id(id) is None:
+            if repository.get_by_id(id) is None:
                 raise ValueError("Nenhum bem encontrado.")
-            return repository.get_id(id)
+            return repository.get_by_id(id)
         except ValueError as e:
             raise HTTPException(status_code=404, detail=str(e))
 

@@ -37,10 +37,10 @@ class MovimentacaoService:
         except HTTPException as e:
             raise e
 
-    def put_movimentacao(self, id: int, data: datetime, setor_destino_id: int):
+    def put_movimentacao(self, id: int, data: datetime, setor_destino_id: int, justificativa=None):
         try:
             repository = MovimentacaoRepository()
-            return repository.put(id, data, setor_destino_id)
+            return repository.put(id, data, setor_destino_id, justificativa)
         except errors.NoDataFound:
             raise HTTPException(status_code=404, detail=f"Movimentação com id {id} não encontrada")
 

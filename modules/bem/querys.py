@@ -11,8 +11,8 @@ QUERY_DELETE_BEM = """UPDATE bens SET ativo = FALSE WHERE bens.id = (%s) RETURNI
 
 QUERY_BEM_CODTOMB = "SELECT id, nome, codigo_tombamento, valor, status, ativo FROM bens WHERE codigo_tombamento = %s"
 
-QUERY_HISTORICO = """SELECT id, bem_id, setor_origem_id, setor_destino_id, data, ativo FROM movimentacoes 
-                   WHERE id = %s ORDER BY data DESC"""
+QUERY_HISTORICO = """SELECT id, bem_id, setor_origem_id, setor_destino_id, data_movimentacao, ativo FROM movimentacoes 
+                   WHERE id = %s ORDER BY data_movimentacao DESC"""
 
 QUERY_BENS_POR_SETOR = """
                        SELECT b.id, b.nome, b.codigo_tombamento,b.valor, b.status, b.ativo, b.status
@@ -20,7 +20,7 @@ QUERY_BENS_POR_SETOR = """
                                 JOIN (SELECT DISTINCT ON (bem_id) bem_id, 
                                       setor_destino_id FROM movimentacoes 
                                       WHERE ativo = TRUE
-                                      ORDER BY bem_id, data DESC) m ON m.bem_id = b.id
+                                      ORDER BY bem_id, data_movimentacao DESC) m ON m.bem_id = b.id
                        WHERE m.setor_destino_id = %s
                          AND b.ativo = TRUE
                        """
@@ -33,7 +33,7 @@ QUERY_ULTIMO_SETOR = """
         SELECT setor_destino_id 
         FROM movimentacoes 
         WHERE bem_id = %s AND ativo = TRUE
-        ORDER BY data DESC 
+        ORDER BY data_movimentacao DESC 
         LIMIT 1;
     """
 

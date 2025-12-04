@@ -44,6 +44,7 @@ CREATE TABLE movimentacoes (
     setor_origem_id INTEGER REFERENCES setores(id),
     setor_destino_id INTEGER REFERENCES setores(id),
     data_movimentacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    justificativa VARCHAR(500),
     ativo BOOLEAN NOT NULL DEFAULT TRUE
 );
 
