@@ -60,6 +60,13 @@ def listar_bens_por_setor(setor_id: int):
     service = BemService()
     return service.get_por_setor(setor_id)
 
+@router.get("/relatorios/bens-ativos-por-status")
+def bens_ativos_por_status():
+    service = BemService()
+    return service.bens_ativos_por_status()
+
+
+
 @router.post("/{id}/desativar")
 def desativar_bem(id: int):
     service = BemService()
@@ -71,7 +78,3 @@ def reativar_bem(id: int):
     service = BemService()
     return service.reativar_bem(id)
 
-@router.get("/relatorios/bens-ativos-por-status")
-def bens_ativos_por_status():
-    service = BemService()
-    return service.bens_ativos_por_status()
