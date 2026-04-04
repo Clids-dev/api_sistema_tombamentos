@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request, Form
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 
 from core.db import DataBase
 from modules.usuario.repository import UsuarioRepository
@@ -22,41 +23,17 @@ def login(
     login_usuario: str = Form(...),
     password_usuario: str = Form(...)
 ):
-    
-    print("=== LOGIN RECEBIDO ===")
-    print("Usuário:", login_usuario)
-
     db = DataBase()
     repo = UsuarioRepository(db)
     service = UsuarioService(repo)
 
-    try:
-        user = service.login(login_usuario, password_usuario)
+    user = service.login(login_usuario, password_usuario)
 
-        if not user:
-            print("❌ Login inválido")
-
-            return templates.TemplateResponse("login.html", {
-                "request": request,
-                "erro": "Login inválido"
-            })
-
-        print("✅ Login válido!")
-        print("Tipo:", user[3])
-
+    if not user:
         return templates.TemplateResponse("login.html", {
             "request": request,
-            "sucesso": "Login realizado com sucesso"
+            "erro": "Login inválido"
         })
-
-    except Exception as e:
-        print("🔥 ERRO:", e)
-        db.conn.rollback()
-
-        return templates.TemplateResponse("login.html", {
-            "request": request,
-            "erro": "Erro interno no servidor"
-        })
-
-    finally:
-        db.conn.close()  # 🔥 garante que sempre fecha
+    response = RedirectResponse(url="/index", status_code=302)
+    response.set_cookie(key="username", value=user[1])
+    return response

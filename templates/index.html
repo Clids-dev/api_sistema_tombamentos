@@ -18,7 +18,7 @@
         
       
         <div class="logo">
-            <img src="logo.png" alt="Logo" width="40">
+            <img src="{{ url_for('static', path='logo.png') }}" alt="Logo">
             <span>PatriFlow</span>
         </div>
 
@@ -85,7 +85,7 @@
 
     <!-- Header -->
     <div class="header">
-        <h1>Olá, Magnata</h1>
+        <h1>Olá, {{username}}!</h1>
     </div>
 
     <!-- Cards -->
