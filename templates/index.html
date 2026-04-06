@@ -16,10 +16,10 @@
    
     <div class="sidebar">
         
-      
+
         <div class="logo">
-            <img src="{{ url_for('static', path='logo.png') }}" alt="Logo">
-            <span>PatriFlow</span>
+            <!--<img src="{{ url_for('static', path='logo.png') }}" alt="Logo">-->
+            <span>Tombamentos</span>
         </div>
 
        
@@ -59,7 +59,7 @@
                 <span>Help</span>
             </a>
 
-            <a href="/logout" class="logout">
+            <a href="/login" class="logout">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Sair</span>
             </a>
@@ -92,17 +92,17 @@
     <div class="cards">
         <div class="card">
             <h3>Total de Itens</h3>
-            <p>120</p>
+            <p>{{bens_total}}</p>
         </div>
 
         <div class="card">
             <h3>Itens Ativos</h3>
-            <p>98</p>
+            <p>{{bens_ativos}}</p>
         </div>
 
         <div class="card">
             <h3>Itens Inativos</h3>
-            <p>22</p>
+            <p>{{bens_inativos}}</p>
         </div>
     </div>
 

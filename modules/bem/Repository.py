@@ -117,3 +117,16 @@ class BemRepository(DataBase):
             {"status": row[0], "quantidade": row[1]}
             for row in rows
             ]
+
+    def quantidade_total_bens(self):
+        db = DataBase()
+        return db.execute(querys.QUERY_QUANTIDADE_BENS)
+
+    def quantidade_bens_ativos(self):
+        db = DataBase()
+        return db.execute(querys.QUERY_QUANTIDADE_BENS_ATIVOS)
+
+    def quantidade_bens_inativos(self):
+        db = DataBase()
+        return db.execute(querys.QUERY_QUANTIDADE_BENS_INATIVOS)
+

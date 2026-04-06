@@ -49,3 +49,11 @@ QUERY_RELATORIO_ATIVOS = """
         WHERE ativo = TRUE
         GROUP BY status;
     """
+
+QUERY_QUANTIDADE_BENS = """SELECT COUNT (*) FROM bens;"""
+
+QUERY_QUANTIDADE_BENS_ATIVOS = """SELECT COUNT (*) FROM bens 
+                                  WHERE ativo = TRUE;"""
+
+QUERY_QUANTIDADE_BENS_INATIVOS = """SELECT COUNT (*) FROM bens 
+                                    WHERE ativo = FALSE;"""
