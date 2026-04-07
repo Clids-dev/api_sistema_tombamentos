@@ -1,9 +1,9 @@
-    DROP TABLE responsaveis CASCADE;
-    DROP TABLE setores CASCADE;
-    DROP TABLE movimentacoes CASCADE;
-    DROP TABLE bens CASCADE;
-    DROP TABLE categorias CASCADE;
-    DROP TABLE usuarios CASCADE;
+    DROP TABLE IF EXISTS movimentacoes CASCADE;
+    DROP TABLE IF EXISTS bens CASCADE;
+    DROP TABLE IF EXISTS setores CASCADE;
+    DROP TABLE IF EXISTS responsaveis CASCADE;
+    DROP TABLE IF EXISTS categorias CASCADE;
+    DROP TABLE IF EXISTS usuarios CASCADE;
 
 
 

@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sistema</title>
 
-    <!-- 🔥 CSS EXTERNO -->
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
-<body>
+<body class="login-page">
 
 <div class="login-container">
     <form action="/login" method="POST">
@@ -25,7 +24,6 @@
             <input type="password" name="password_usuario" placeholder="********" required>
         </div>
 
-        <!-- 🔥 MENSAGENS -->
         {% if erro %}
             <div class="erro">{{ erro }}</div>
         {% endif %}
@@ -39,4 +37,3 @@
 </div>
 
 </body>
-</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PatriFlow</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body class="home-page">
+
+   
+    <div class="sidebar">
+        
+
+        <div class="logo">
+            <!--<img src="{{ url_for('static', path='logo.png') }}" alt="Logo">-->
+            <span>Tombamentos</span>
+        </div>
+
+       
+        <div class="nav-menu">
+            <a href="#" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+
+            <a href="#">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+
+            <a href="#">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet</span>
+            </a>
+
+            <a href="#">
+                <i class="fas fa-chart-bar"></i>
+                <span>Analytics</span>
+            </a>
+
+            <a href="#">
+                <i class="fas fa-tasks"></i>
+                <span>Tasks</span>
+            </a>
+
+            <a href="#">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+
+            <a href="#">
+                <i class="fas fa-question-circle"></i>
+                <span>Help</span>
+            </a>
+
+            <a href="/login" class="logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </a>
+        </div>
+
+    </div>
+
+   
+    <div class="main-content">
+
+       
+        <div class="header">
+            <h1>Bem-vindo</h1>
+        </div>
+
+        <div class="content">
+            <p>Cuida</p>
+        </div>
+
+    </div>
+
+    <div class="main-content">
+
+    <!-- Header -->
+    <div class="header">
+        <h1>Olá, {{username}}!</h1>
+    </div>
+
+    <!-- Cards -->
+    <div class="cards">
+        <div class="card">
+            <h3>Total de Itens</h3>
+            <p>{{bens_total}}</p>
+        </div>
+
+        <div class="card">
+            <h3>Itens Ativos</h3>
+            <p>{{bens_ativos}}</p>
+        </div>
+
+        <div class="card">
+            <h3>Itens Inativos</h3>
+            <p>{{bens_inativos}}</p>
+        </div>
+    </div>
+
+    <!-- Tabela -->
+    <div class="table-container">
+        <h2>Últimos Registros</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Computador Dell</td>
+                    <td>Ativo</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Monitor LG</td>
+                    <td>Ativo</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Teclado Mecânico</td>
+                    <td>Inativo</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

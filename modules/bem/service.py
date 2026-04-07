@@ -112,3 +112,15 @@ class BemService:
     def bens_ativos_por_status(self):
         repository = BemRepository()
         return repository.relatorio_bens_ativos_por_status()
+
+    def quantidade_bens(self):
+        repository = BemRepository()
+        return repository.quantidade_total_bens()[0][0]
+
+    def quantidade_bens_ativos(self):
+        repository = BemRepository()
+        return repository.quantidade_bens_ativos()[0][0]
+
+    def quantidade_bens_inativos(self):
+        repository = BemRepository()
+        return repository.quantidade_bens_inativos()[0][0]

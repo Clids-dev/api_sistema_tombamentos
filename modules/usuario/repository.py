@@ -14,5 +14,5 @@ class UsuarioRepository:
         
         except Exception as e:
             print("ERRO NO BANCO:", e)
-            self.db.conn.rollback()  # 🔥 ISSO AQUI RESOLVE
+            self.db.conn.rollback()
             return None

@@ -1,13 +1,19 @@
+/* ===== RESET / BASE (pode ser global) ===== */
 body {
     font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+}
+
+/* ===== LOGIN PAGE ===== */
+.login-page {
     background-color: #747880;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
 }
 
+/* Container */
 .login-container {
     background-color: white;
     padding: 2rem;
@@ -17,22 +23,24 @@ body {
     max-width: 400px;
 }
 
-h2 {
+/* Título */
+.login-container h2 {
     text-align: center;
     color: #333;
 }
 
-.input-group {
+/* Inputs */
+.login-container .input-group {
     margin-bottom: 1rem;
 }
 
-label {
+.login-container label {
     display: block;
     margin-bottom: 5px;
-    color: #660;
+    color: rgb(17, 88, 241);
 }
 
-input {
+.login-container input {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
@@ -40,7 +48,8 @@ input {
     box-sizing: border-box;
 }
 
-button {
+/* Botão */
+.login-container button {
     width: 100%;
     padding: 10px;
     background-color: #007bff;
@@ -51,12 +60,13 @@ button {
     font-size: 16px;
 }
 
-button:hover {
+.login-container button:hover {
     background-color: #0056b3;
 }
 
-.erro {
-    background-color: #ffe5e5;
+/* Mensagens */
+.login-container .erro {
+    background-color: #f7f7f7;
     color: #d8000c;
     border: 1px solid #ffb3b3;
     padding: 10px;
@@ -66,7 +76,7 @@ button:hover {
     font-size: 14px;
 }
 
-.sucesso {
+.login-container .sucesso {
     background-color: #e6ffed;
     color: #2e7d32;
     border: 1px solid #b7ebc6;
@@ -77,10 +87,12 @@ button:hover {
     font-size: 14px;
 }
 
-.erro, .sucesso {
+.login-container .erro,
+.login-container .sucesso {
     animation: fadeIn 0.3s ease-in-out;
 }
 
+/* Animação (pode ser global) */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -90,4 +102,142 @@ button:hover {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.home-page {
+    background-color: #f5f7ff;
+}
+
+/* Sidebar (substitui teu nav antigo) */
+.sidebar {
+    width: 280px;
+    background-color: white;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 30px 0;
+    box-shadow: 5px 0 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Logo */
+.logo {
+    padding: 0 30px 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    width: 40px;
+}
+
+/* Menu */
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    padding: 0 15px;
+}
+
+.nav-menu a {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    color: #6c7380;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.nav-menu a i {
+    margin-right: 10px;
+}
+
+.nav-menu a:hover {
+    background-color: #edf0fb;
+    color: #4270f4;
+}
+
+.nav-menu .active {
+    background-color: #edf0fb;
+    color: #4270f4;
+}
+
+/* Conteúdo principal */
+.main-content {
+    margin-left: 280px;
+    padding: 30px;
+}
+
+/* Header */
+.header {
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 24px;
+}
+
+/* Conteúdo */
+.content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* CARDS */
+.cards {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card {
+    flex: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.card h3 {
+    color: #6c7380;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #4270f4;
+}
+
+/* TABELA */
+.table-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.table-container h2 {
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th,
+table td {
+    padding: 12px;
+    text-align: left;
+}
+
+table th {
+    background: #f5f7ff;
+}
+
+table tr:not(:last-child) {
+    border-bottom: 1px solid #eee;
 }
