@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Equipamentos</title>
+
+   <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body class="home-page">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <div class="logo">
+        <span>Tombamentos</span>
+    </div>
+
+    <div class="nav-menu">
+
+        <a href="/index">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+
+
+
+        <a href="/bens" class="active">
+            <i class="fas fa-box"></i>
+            <span>Equipamentos</span>
+        </a>
+
+        <a href="/login" class="logout">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Sair</span>
+        </a>
+
+    </div>
+</div>
+
+<!-- CONTEÚDO -->
+<div class="main-content">
+
+    <div class="header">
+        <h1>Equipamentos</h1>
+    </div>
+
+    <!-- FORM -->
+    <div class="form-container">
+        <h3>Cadastrar novo bem</h3>
+
+        <form onsubmit="criarBem(event)" class="form-grid">
+
+            <div class="form-group">
+                <label>Nome</label>
+                <input id="nome" placeholder="Ex: Notebook Dell">
+            </div>
+
+            <div class="form-group">
+                <label>Código</label>
+                <input id="codigo" placeholder="Ex: PAT-001">
+            </div>
+
+            <div class="form-group">
+                <label>Valor</label>
+                <input id="valor" placeholder="Ex: 2500">
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <input id="status" placeholder="Ex: em_uso">
+            </div>
+
+            <button type="submit" class="btn-primary">Salvar</button>
+
+        </form>
+    </div>
+
+    <!-- TABELA -->
+    <div class="table-container">
+        <h2>Lista de Bens</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody id="tabela-bens">
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- SCRIPT -->
+<script>
+async function carregarBens() {
+    const response = await fetch("/bem/");
+    const bens = await response.json();
+
+    const tabela = document.getElementById("tabela-bens");
+    tabela.innerHTML = "";
+
+    bens.forEach(bem => {
+        tabela.innerHTML += `
+            <tr>
+                <td>${bem.id}</td>
+                <td>${bem.nome}</td>
+                <td>${bem.status}</td>
+                <td>
+                    <button class="btn-delete" onclick="deletar(${bem.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+async function deletar(id) {
+    await fetch(`/bem/${id}/`, {
+        method: "DELETE"
+    });
+
+    carregarBens();
+}
+
+async function criarBem(e) {
+    e.preventDefault();
+
+    const bem = {
+        nome: document.getElementById("nome").value,
+        codigo_tombamento: document.getElementById("codigo").value,
+        valor: parseFloat(document.getElementById("valor").value),
+        status: document.getElementById("status").value
+    };
+
+    await fetch("/bem/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(bem)
+    });
+
+    alert("Bem cadastrado com sucesso");
+
+    carregarBens();
+}
+
+
+carregarBens();
+</script>
+
+</body>
+</html>

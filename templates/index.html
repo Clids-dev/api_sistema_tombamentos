@@ -24,6 +24,7 @@
 
        
         <div class="nav-menu">
+    
             <a href="#" class="nav-item active">
                 <i class="fas fa-home"></i>
                 <span>Home</span>
@@ -31,38 +32,33 @@
 
             <a href="#">
                 <i class="fas fa-user"></i>
-                <span>Profile</span>
+                <span>Perfil</span>
             </a>
 
+            {% if tipo == "admin" %}
+
+            <a href="/bens">
+                <i class="fas fa-box"></i>
+                <span>Equipamentos</span>
+            </a>
+            
             <a href="#">
-                <i class="fas fa-wallet"></i>
-                <span>Wallet</span>
+                <i class="fas fa-users"></i>
+                <span>Usuários</span>
             </a>
 
             <a href="#">
                 <i class="fas fa-chart-bar"></i>
-                <span>Analytics</span>
+                <span>Relatórios</span>
             </a>
 
-            <a href="#">
-                <i class="fas fa-tasks"></i>
-                <span>Tasks</span>
-            </a>
-
-            <a href="#">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </a>
-
-            <a href="#">
-                <i class="fas fa-question-circle"></i>
-                <span>Help</span>
-            </a>
+            {% endif %}
 
             <a href="/login" class="logout">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Sair</span>
             </a>
+
         </div>
 
     </div>

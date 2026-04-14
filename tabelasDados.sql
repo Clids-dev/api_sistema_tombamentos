@@ -89,7 +89,9 @@
     ('Servidor Dell PowerEdge', 'PAT-2024-005', 25000.00, 'em_manutencao', TRUE);
 
     INSERT INTO usuarios (username, senha, tipo)
-    VALUES ('admin', '123', 'admin');
+    VALUES ('admin', '123', 'admin'),
+    ('joao','123', 'comum');
+
 
 
 

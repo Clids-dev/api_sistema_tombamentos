@@ -35,5 +35,8 @@ def login(
             "erro": "Login inválido"
         })
     response = RedirectResponse(url="/index", status_code=302)
+
     response.set_cookie(key="username", value=user[1])
+    response.set_cookie(key="tipo", value=user[3])
+
     return response
