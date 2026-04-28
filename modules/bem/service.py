@@ -124,3 +124,7 @@ class BemService:
     def quantidade_bens_inativos(self):
         repository = BemRepository()
         return repository.quantidade_bens_inativos()[0][0]
+
+    def bens_recentes(self):
+        repository = BemRepository()
+        return repository.get_registros_recentes()
