@@ -13,9 +13,10 @@
         id SERIAL PRIMARY KEY,
         nome VARCHAR(100) NOT NULL,
         codigo_tombamento VARCHAR(50) UNIQUE NOT NULL,
-        valor DECIMAL NOT NULL,
+        valor DECIMAL(10, 2) NOT NULL,
         status VARCHAR(50) NOT NULL,
-        ativo BOOLEAN NOT NULL DEFAULT TRUE
+        ativo BOOLEAN NOT NULL DEFAULT TRUE,
+        data_cadastro TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
 
     CREATE TABLE categorias (
@@ -81,12 +82,27 @@
     ('Recursos Humanos', 4, TRUE);
 
     -- 4. Inserir Bens
-    INSERT INTO bens (nome, codigo_tombamento, valor, status, ativo) VALUES
-    ('Notebook Lenovo Thinkpad', 'PAT-2024-001', 4200.00, 'em_uso', TRUE),
-    ('Monitor Samsung 27"', 'PAT-2024-002', 1200.50, 'em_uso', TRUE),
-    ('Cadeira Presidente', 'PAT-2024-003', 850.00, 'em_estoque', TRUE),
-    ('Mesa em L', 'PAT-2024-004', 600.00, 'em_uso', TRUE),
-    ('Servidor Dell PowerEdge', 'PAT-2024-005', 25000.00, 'em_manutencao', TRUE);
+    INSERT INTO bens (nome, codigo_tombamento, valor, status, ativo, data_cadastro) VALUES
+    ('Notebook Dell Latitude', 'TMB-001', 4500.00, 'Em Uso', TRUE, '2024-01-15 09:30:00-03'),
+    ('Monitor LG 29 Pol', 'TMB-002', 1200.00, 'Em Uso', TRUE, '2024-02-10 14:00:00-03'),
+    ('Cadeira Ergonômica', 'TMB-003', 850.50, 'Disponível', TRUE, '2024-03-05 10:15:00-03'),
+    ('Teclado Mecânico Logitech', 'TMB-004', 350.00, 'Em Uso', TRUE, '2024-05-20 16:45:00-03'),
+    ('Mouse Gamer Razer', 'TMB-005', 280.00, 'Manutenção', TRUE, '2024-06-12 11:00:00-03'),
+    ('Projetor Epson 4K', 'TMB-006', 3200.00, 'Em Uso', TRUE, '2024-08-01 08:00:00-03'),
+    ('Servidor HP ProLiant', 'TMB-007', 15000.00, 'Em Uso', TRUE, '2024-09-15 13:20:00-03'),
+    ('Switch Cisco 24 Portas', 'TMB-008', 2100.00, 'Disponível', TRUE, '2024-11-30 09:00:00-03'),
+    ('Nobreak APC 1500VA', 'TMB-009', 1100.00, 'Em Uso', TRUE, '2025-01-05 15:30:00-03'),
+    ('Tablet Samsung S9', 'TMB-010', 3800.00, 'Em Uso', TRUE, '2025-02-14 10:00:00-03'),
+    ('Webcam Logitech C920', 'TMB-011', 450.00, 'Disponível', TRUE, '2025-03-22 17:10:00-03'),
+    ('Impressora HP LaserJet', 'TMB-012', 1800.00, 'Manutenção', TRUE, '2025-05-10 14:40:00-03'),
+    ('Ar Condicionado Split', 'TMB-013', 2500.00, 'Em Uso', TRUE, '2025-07-08 09:20:00-03'),
+    ('Mesa de Reunião', 'TMB-014', 1300.00, 'Disponível', TRUE, '2025-09-12 11:50:00-03'),
+    ('Roteador Wi-Fi 6', 'TMB-015', 750.00, 'Em Uso', TRUE, '2025-11-02 08:30:00-03'),
+    ('Headset HyperX Cloud', 'TMB-016', 500.00, 'Em Uso', TRUE, '2026-01-20 13:00:00-03'),
+    ('Estabilizador SMS', 'TMB-017', 150.00, 'Disponível', TRUE, '2026-02-15 10:45:00-03'),
+    ('MacBook Air M2', 'TMB-018', 8500.00, 'Em Uso', TRUE, '2026-03-01 09:00:00-03'),
+    ('Smartphone iPhone 15', 'TMB-019', 6200.00, 'Em Uso', TRUE, '2026-04-10 15:00:00-03'),
+    ('Drone DJI Mini 4', 'TMB-020', 5400.00, 'Disponível', TRUE, '2026-04-20 11:20:00-03');
 
     INSERT INTO usuarios (username, senha, tipo)
     VALUES ('admin', '123', 'admin'),

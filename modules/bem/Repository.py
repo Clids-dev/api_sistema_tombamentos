@@ -130,3 +130,6 @@ class BemRepository(DataBase):
         db = DataBase()
         return db.execute(querys.QUERY_QUANTIDADE_BENS_INATIVOS)
 
+    def get_registros_recentes(self):
+        db = DataBase()
+        return db.execute(querys.QUERY_RECENTES)
