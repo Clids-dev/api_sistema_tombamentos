@@ -27,6 +27,11 @@ def get_bem_by_id(id: int):
     service = BemService()
     return service.get_bem_by_id(id)
 
+@router.get("/{id}/detalhes", response_model=schemas.BemDetalhes)
+def get_bem_detalhes(id: int):
+    service = BemService()
+    return service.get_bem_detalhes(id)
+
 @router.put("/{id}/", response_model=Optional[schemas.Bem])
 def update_bem(id : int, nome: str, status: str):
     service = BemService()

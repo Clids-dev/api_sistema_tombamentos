@@ -1,5 +1,5 @@
 from core.db import DataBase
-from modules.bem.schemas import BemCreate, Bem
+from modules.bem.schemas import BemCreate, Bem, BemDetalhes
 from modules.movimentacao.schemas import Movimentacao
 from modules.bem import querys
 
@@ -23,6 +23,24 @@ class BemRepository(DataBase):
             return None
         row = rows[0]
         return Bem(id=row[0], nome=row[1], codigo_tombamento=row[2], valor=row[3], status=row[4], ativo=row[5])
+
+    def get_detalhes(self, id: int):
+        db = DataBase()
+        rows = db.execute(querys.QUERY_BEM_DETALHES, (id,))
+        if not rows:
+            return None
+        row = rows[0]
+        return BemDetalhes(
+            id=row[0],
+            nome=row[1],
+            codigo_tombamento=row[2],
+            valor=row[3],
+            status=row[4],
+            ativo=row[5],
+            setor_atual=row[6],
+            data_ultima_movimentacao=row[7],
+            justificativa=row[8]
+        )
 
     def save(self, bem : BemCreate):
         db = DataBase()

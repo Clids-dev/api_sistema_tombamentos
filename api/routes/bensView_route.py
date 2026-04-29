@@ -6,6 +6,10 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get("/bens")
 def tela_bens(request: Request):
+    nome = request.cookies.get("username")
+    tipo = request.cookies.get("tipo")
     return templates.TemplateResponse("bens.html", {
-        "request": request
+        "request": request,
+        "username": nome,
+        "tipo": tipo
     })

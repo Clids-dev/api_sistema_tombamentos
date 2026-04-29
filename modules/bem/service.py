@@ -22,6 +22,13 @@ class BemService:
         except ValueError as e:
             raise HTTPException(status_code=404, detail=str(e))
 
+    def get_bem_detalhes(self, id: int):
+        repository = BemRepository()
+        bem = repository.get_detalhes(id)
+        if not bem:
+            raise HTTPException(status_code=404, detail="Bem não encontrado")
+        return bem
+
     def create_bem(self, bem : BemCreate):
         repository = BemRepository()
         return repository.save(bem)

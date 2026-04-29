@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
 from modules.bem.service import BemService
+from modules.categoria.service import CategoriaService
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -12,6 +13,8 @@ def get_index(request: Request):
     tipo = request.cookies.get("tipo")
 
     service = BemService()
+    cat_service = CategoriaService()
+    
     bens_total = service.quantidade_bens()
     bens_ativos = service.quantidade_bens_ativos()
     bens_inativos = service.quantidade_bens_inativos()
@@ -19,6 +22,8 @@ def get_index(request: Request):
     recente1 = service.bens_recentes()[0][1]
     recente2 = service.bens_recentes()[1][1]
     recente3 = service.bens_recentes()[2][1]
+
+    categorias = cat_service.get_categorias()
 
     return templates.TemplateResponse(
         name="index.html",
@@ -31,6 +36,9 @@ def get_index(request: Request):
             "bens_inativos": bens_inativos,
             "recente1": recente1,
             "recente2": recente2,
-            "recente3": recente3
+            "recente3": recente3,
+            "categorias": categorias
         }
     )
+
+

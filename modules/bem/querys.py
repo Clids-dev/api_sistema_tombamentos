@@ -2,6 +2,23 @@ QUERY_BENS = "SELECT id, nome, codigo_tombamento, valor, status, ativo FROM bens
 
 QUERY_BEM_ID = "SELECT id, nome, codigo_tombamento, valor, status, ativo FROM bens WHERE id = %s"
 
+QUERY_BEM_DETALHES = """
+    SELECT 
+        b.id, b.nome, b.codigo_tombamento, b.valor, b.status, b.ativo,
+        s.nome as setor_atual,
+        m.data_movimentacao as data_ultima_movimentacao,
+        m.justificativa
+    FROM bens b
+    LEFT JOIN (
+        SELECT DISTINCT ON (bem_id) bem_id, setor_destino_id, data_movimentacao, justificativa
+        FROM movimentacoes 
+        WHERE ativo = TRUE 
+        ORDER BY bem_id, data_movimentacao DESC
+    ) m ON m.bem_id = b.id
+    LEFT JOIN setores s ON s.id = m.setor_destino_id
+    WHERE b.id = %s
+"""
+
 QUERY_CREATE_BEM = ('INSERT INTO bens (nome, codigo_tombamento, valor, status, ativo) '
                     'VALUES (%s, %s, %s, %s, %s) '
                     'RETURNING id;')
