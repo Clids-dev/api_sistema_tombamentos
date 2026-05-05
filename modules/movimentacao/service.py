@@ -4,7 +4,7 @@ from psycopg2 import errors
 
 from fastapi import HTTPException
 from modules.setor.repository import SetorRepository
-from modules.bem.Repository import BemRepository
+from modules.bem.repository import BemRepository
 from modules.movimentacao.repository import MovimentacaoRepository
 from modules.movimentacao.schemas import MovimentacaoCreate
 

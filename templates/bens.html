@@ -252,7 +252,7 @@
 
         async function carregarBens() {
             try {
-                const response = await fetch("/bem/");
+                const response = await fetch("/api/v1/bem/");
                 todosBens = await response.json();
                 filtrados = [...todosBens];
                 renderizarTabela();
@@ -346,7 +346,7 @@
             myModal.show();
 
             try {
-                const response = await fetch(`/bem/${id}/detalhes`);
+                const response = await fetch(`/api/v1/bem/${id}/detalhes`);
                 const bem = await response.json();
                 
                 const dataFormatada = bem.data_ultima_movimentacao ? new Date(bem.data_ultima_movimentacao).toLocaleString('pt-BR') : "Sem registro";
@@ -419,7 +419,7 @@
             if (!confirm("Tem certeza que deseja desativar este equipamento?")) return;
 
             try {
-                await fetch(`/bem/${id}/`, { method: "DELETE" });
+                await fetch(`/api/v1/bem/${id}/`, { method: "DELETE" });
                 carregarBens();
             } catch (error) {
                 alert("Erro ao excluir bem.");
@@ -437,7 +437,7 @@
             };
 
             try {
-                const response = await fetch("/bem/", {
+                const response = await fetch("/api/v1/bem/", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(bem)

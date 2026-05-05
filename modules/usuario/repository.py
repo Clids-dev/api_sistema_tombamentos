@@ -1,18 +1,12 @@
-class UsuarioRepository:
-    def __init__(self, db):
-        self.db = db
+from core.database import DataBase
+from . import queries
 
-    def buscar_por_username(self, username):
-        cursor = self.db.conn.cursor()
-    
+class UsuarioRepository:
+    def buscar_por_username(self, username: str):
+        db = DataBase()
         try:
-            cursor.execute(
-                "SELECT id, username, senha, tipo, ativo FROM usuarios WHERE username = %s",
-                (username,)
-            )
-            return cursor.fetchone()
-        
+            result = db.execute(queries.QUERY_BUSCAR_POR_USERNAME, (username,), many=False)
+            return result
         except Exception as e:
-            print("ERRO NO BANCO:", e)
-            self.db.conn.rollback()
+            print(f"ERRO NO BANCO: {e}")
             return None

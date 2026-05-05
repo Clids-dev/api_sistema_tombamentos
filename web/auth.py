@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 
-from core.db import DataBase
+from core.database import DataBase
 from modules.usuario.repository import UsuarioRepository
 from modules.usuario.service import UsuarioService
 
@@ -23,8 +23,7 @@ def login(
     login_usuario: str = Form(...),
     password_usuario: str = Form(...)
 ):
-    db = DataBase()
-    repo = UsuarioRepository(db)
+    repo = UsuarioRepository()
     service = UsuarioService(repo)
 
     user = service.login(login_usuario, password_usuario)

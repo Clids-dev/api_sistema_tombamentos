@@ -1,0 +1,26 @@
+QUERY_SETORES = """SELECT
+                        s.id as id_setor,
+                        s.nome as setor,
+                        s.responsavel_id as id_responsavel,
+                        r.nome as responsaveis,
+                        r.cargo as cargo_responsavel
+                    FROM
+                        setores s
+                    JOIN
+                        responsaveis r ON s.responsavel_id = r.id
+                    WHERE 
+                        s.ativo = TRUE;"""
+
+QUERY_SETOR_BY_ID = """SELECT s.id as id_setor, s.nome as setor, s.responsavel_id as id_responsavel,
+                        r.nome as responsaveis, r.cargo as cargo_responsavel
+                       FROM setores s
+                        JOIN responsaveis r ON s.responsavel_id = r.id 
+                       WHERE s.id = %s AND s.ativo = TRUE;"""
+
+QUERY_CREATE_SETOR = """INSERT INTO setores (nome, responsavel_id)
+                         VALUES (%s, %s) RETURNING id"""
+
+QUERY_PUT_SETOR = """UPDATE setores SET nome = %s, responsavel_id = %s 
+                    WHERE id = %s RETURNING id"""
+
+QUERY_DELETE_SETOR = """UPDATE setores SET ativo = FALSE WHERE id = %s RETURNING id"""

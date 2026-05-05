@@ -1,0 +1,5 @@
+QUERY_RESPONSAVEIS = "SELECT id, nome, cargo, ativo FROM responsaveis WHERE ativo = TRUE"
+QUERY_RESPONSAVEL_BY_ID = "SELECT id, nome, cargo, ativo FROM responsaveis WHERE id = %s AND ativo = TRUE"
+QUERY_CREATE_RESPONSAVEL = "INSERT INTO responsaveis (nome, cargo) VALUES (%s, %s) RETURNING id, nome, cargo, ativo"
+QUERY_PUT_RESPONSAVEL = "UPDATE responsaveis SET nome = %s, cargo = %s WHERE id = %s RETURNING id, nome, cargo, ativo"
+QUERY_DELETE_RESPONSAVEL = "UPDATE responsaveis SET ativo = FALSE WHERE id = %s RETURNING id, nome, cargo, ativo"

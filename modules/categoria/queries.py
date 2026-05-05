@@ -1,0 +1,5 @@
+QUERY_CATEGORIAS = """SELECT id, nome, ativo FROM categorias WHERE ativo = TRUE"""
+QUERY_CATEGORIA_ID = """SELECT id, nome, ativo FROM categorias where id = %s AND ativo = TRUE"""
+QUERY_CREATE_CATEGORIA = """INSERT INTO categorias (nome) VALUES (%s) RETURNING id"""
+QUERY_PUT_CATEGORIA = "UPDATE categorias SET nome = (%s) WHERE categorias.id = (%s) RETURNING id, nome, ativo"
+QUERY_DELETE_CATEGORIA = """UPDATE categorias SET ativo = FALSE WHERE categorias.id = (%s) RETURNING id, nome, ativo"""

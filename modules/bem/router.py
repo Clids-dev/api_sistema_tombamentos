@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi.params import Depends
 
-from core.db import DataBase
+from core.database import DataBase
 from modules.bem import schemas
 from modules.bem.schemas import BemCreate, BemDeleteResponse
 from modules.bem.service import BemService

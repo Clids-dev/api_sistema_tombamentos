@@ -75,7 +75,7 @@ QUERY_QUANTIDADE_BENS_ATIVOS = """SELECT COUNT (*) FROM bens
 QUERY_QUANTIDADE_BENS_INATIVOS = """SELECT COUNT (*) FROM bens 
                                     WHERE ativo = FALSE;"""
 
-# querys.py
+# queries.py
 QUERY_RECENTES = """SELECT id, nome, codigo_tombamento, valor, status, ativo, data_cadastro
                     FROM bens 
                     ORDER BY data_cadastro 

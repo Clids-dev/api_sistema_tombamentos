@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 
-from modules.bem.Repository import BemRepository
+from modules.bem.repository import BemRepository
 from modules.bem.schemas import BemCreate
 
 from psycopg2 import errors

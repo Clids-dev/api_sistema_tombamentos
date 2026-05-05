@@ -1,24 +1,23 @@
-
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from api.v1.router import api_router
+from web.router import web_router
 
-from api.routes import bensView_route, categoria_route, bem_route, responsavel_routes, setor_routes, movimentacao_routes, login_route, \
-    index_route
+app = FastAPI(
+    title="Sistema de Tombamento",
+    description="API e Interface Web para gestão de patrimônio",
+    version="1.0.0"
+)
 
-app = FastAPI()
-
+# Arquivos Estáticos
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-app.include_router(login_route.router)
-app.include_router(index_route.router)
-app.include_router(bensView_route.router)
-app.include_router(bem_route.router)
-app.include_router(categoria_route.router)
-app.include_router(setor_routes.router)
-app.include_router(movimentacao_routes.router)
-app.include_router(responsavel_routes.router)
+# Rotas Web (Templates)
+app.include_router(web_router)
 
+# Rotas API (JSON)
+app.include_router(api_router, prefix="/api/v1")
 
 @app.get("/")
-async def read_root():
-    return {"Hello": "World"}
+async def root():
+    return {"message": "Bem-vindo ao Sistema de Tombamento. Acesse /index para a interface web ou /docs para a API."}
