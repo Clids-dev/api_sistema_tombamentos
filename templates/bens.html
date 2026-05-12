@@ -75,7 +75,7 @@
             </a>
             {% endif %}
 
-            <a href="#" class="nav-link p-3 rounded-3 mb-2 ">
+            <a href="/movimentacao" class="nav-link p-3 rounded-3 mb-2 ">
                 <i class="fas fa-history me-3"></i> Movimentações
             </a>
 
@@ -127,7 +127,7 @@
                                 <option value="disponivel">Disponível</option>
                                 <option value="em_uso">Em Uso</option>
                                 <option value="manutencao">Manutenção</option>
-                                <option value="baixado">Baixado</option>
+                                <option value="baixado">Baixado / Inativo</option>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -208,10 +208,10 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small">Status Inicial</label>
                                 <select id="status" class="form-select border-2" required>
-                                    <option value="disponivel">Disponível</option>
-                                    <option value="em_uso">Em Uso</option>
-                                    <option value="manutencao">Manutenção</option>
-                                    <option value="baixado">Baixado</option>
+                                    <option value="Disponível">Disponível</option>
+                                    <option value="Em Uso">Em Uso</option>
+                                    <option value="Manutenção">Manutenção</option>
+                                    <option value="Baixado">Baixado</option>
                                 </select>
                             </div>
                         </div>
@@ -273,12 +273,15 @@
                 return;
             }
 
+            // Ordenação consistente por ID decrescente (mais novos primeiro)
+            filtrados.sort((a, b) => b.id - a.id);
+
             const inicio = (paginaAtual - 1) * itensPorPagina;
             const fim = inicio + itensPorPagina;
             const itensPagina = filtrados.slice(inicio, fim);
 
             itensPagina.forEach(bem => {
-                const statusBadge = getStatusBadge(bem.status);
+                const statusBadge = getStatusBadge(bem.status, bem.ativo);
                 tabela.innerHTML += `
                     <tr>
                         <td class="ps-4"><span class="text-muted">#${bem.id}</span></td>
@@ -290,7 +293,10 @@
                             <div class="btn-group">
                                 <button class="btn btn-sm btn-light text-primary" onclick="verDetalhes(${bem.id})" title="Ver Detalhes"><i class="fas fa-eye"></i></button>
                                 <button class="btn btn-sm btn-light text-warning" title="Editar"><i class="fas fa-edit"></i></button>
-                                <button class="btn btn-sm btn-light text-danger" onclick="deletar(${bem.id})" title="Excluir"><i class="fas fa-trash"></i></button>
+                                ${bem.ativo ? 
+                                    `<button class="btn btn-sm btn-light text-danger" onclick="deletar(${bem.id})" title="Desativar"><i class="fas fa-trash"></i></button>` :
+                                    `<button class="btn btn-sm btn-light text-success" onclick="reativar(${bem.id})" title="Reativar"><i class="fas fa-redo"></i></button>`
+                                }
                             </div>
                         </td>
                     </tr>
@@ -368,7 +374,7 @@
                         <div class="col-6">
                             <div class="p-3 bg-light rounded-3">
                                 <small class="text-muted d-block mb-1">Status</small>
-                                ${getStatusBadge(bem.status)}
+                                ${getStatusBadge(bem.status, bem.ativo)}
                             </div>
                         </div>
                         <div class="col-12">
@@ -385,22 +391,53 @@
             }
         }
 
-        function getStatusBadge(status) {
+        function getStatusBadge(status, ativo = true) {
+            if (!ativo) return '<span class="badge bg-danger-subtle text-danger rounded-pill px-3"><i class="fas fa-ban me-1"></i>Inativo / Baixado</span>';
+            
             const s = status.toLowerCase();
-            if (s === 'disponivel' || s === 'disponível') return '<span class="badge bg-success-subtle text-success rounded-pill px-3">Disponível</span>';
-            if (s === 'em_uso') return '<span class="badge bg-primary-subtle text-primary rounded-pill px-3">Em Uso</span>';
-            if (s === 'manutencao' || s === 'manutenção') return '<span class="badge bg-warning-subtle text-warning rounded-pill px-3">Manutenção</span>';
-            return `<span class="badge bg-secondary-subtle  rounded-pill px-3">${status}</span>`;
+            if (s.includes('disponivel')) 
+                return '<span class="badge bg-success text-white rounded-pill px-3 shadow-sm"><i class="fas fa-check-circle me-1"></i>Disponível</span>';
+            
+            if (s === 'em uso' || s === 'em_uso') 
+                return '<span class="badge bg-primary-subtle text-primary rounded-pill px-3"><i class="fas fa-user-check me-1"></i>Em Uso</span>';
+            
+            if (s.includes('manutencao')) 
+                return '<span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-3"><i class="fas fa-tools me-1"></i>Manutenção</span>';
+            
+            if (s.includes('baixado'))
+                return '<span class="badge bg-danger-subtle text-danger rounded-pill px-3"><i class="fas fa-ban me-1"></i>Baixado</span>';
+
+            return `<span class="badge bg-secondary-subtle text-secondary rounded-pill px-3">${status}</span>`;
+        }
+
+        function normalizarString(str) {
+            return str.toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/\s+/g, '')
+                .replace(/_/g, '');
         }
 
         function filtrarBens() {
             const termo = document.getElementById("inputBusca").value.toLowerCase();
-            const status = document.getElementById("filtroStatus").value.toLowerCase();
+            const statusFiltro = document.getElementById("filtroStatus").value.toLowerCase();
 
             filtrados = todosBens.filter(bem => {
                 const matchesBusca = bem.nome.toLowerCase().includes(termo) || 
                                      bem.codigo_tombamento.toLowerCase().includes(termo);
-                const matchesStatus = status === "" || bem.status.toLowerCase() === status;
+                
+                if (statusFiltro === "") return matchesBusca;
+
+                // Normalização robusta para comparação
+                const sFiltroNorm = normalizarString(statusFiltro);
+                let sBemNorm = normalizarString(bem.status);
+                
+                // Tratar bens inativos como 'baixado' no filtro
+                if (!bem.ativo) {
+                    sBemNorm = "baixado";
+                }
+
+                const matchesStatus = sBemNorm === sFiltroNorm;
                 
                 return matchesBusca && matchesStatus;
             });
@@ -419,10 +456,27 @@
             if (!confirm("Tem certeza que deseja desativar este equipamento?")) return;
 
             try {
-                await fetch(`/api/v1/bem/${id}/`, { method: "DELETE" });
-                carregarBens();
+                const response = await fetch(`/api/v1/bem/${id}/desativar`, { method: "POST" });
+                if (response.ok) {
+                    await carregarBens();
+                } else {
+                    alert("Erro ao desativar bem.");
+                }
             } catch (error) {
-                alert("Erro ao excluir bem.");
+                alert("Erro ao processar solicitação.");
+            }
+        }
+
+        async function reativar(id) {
+            if (!confirm("Deseja reativar este equipamento?")) return;
+
+            try {
+                const response = await fetch(`/api/v1/bem/${id}/reativar`, { method: "POST" });
+                if (response.ok) {
+                    await carregarBens();
+                }
+            } catch (error) {
+                alert("Erro ao reativar bem.");
             }
         }
 

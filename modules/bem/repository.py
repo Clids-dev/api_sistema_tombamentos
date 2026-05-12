@@ -39,7 +39,8 @@ class BemRepository(DataBase):
             ativo=row[5],
             setor_atual=row[6],
             data_ultima_movimentacao=row[7],
-            justificativa=row[8]
+            justificativa=row[8],
+            id_setor_atual=row[9]
         )
 
     def save(self, bem : BemCreate):

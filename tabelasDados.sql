@@ -36,6 +36,7 @@
         id SERIAL PRIMARY KEY,
         nome VARCHAR(100) NOT NULL,
         responsavel_id INTEGER REFERENCES responsaveis(id),
+        flag_almoxarifado BOOLEAN NOT NULL DEFAULT FALSE,
         ativo BOOLEAN NOT NULL DEFAULT TRUE
     );
 
@@ -75,11 +76,11 @@
 
     -- 3. Inserir Setores (Vinculando aos Responsáveis criados acima)
     -- IDs esperados: 1=Carlos, 2=Fernanda, 3=João, 4=Mariana
-    INSERT INTO setores (nome, responsavel_id, ativo) VALUES
-    ('Departamento de Tecnologia', 1, TRUE),
-    ('Financeiro', 2, TRUE),
-    ('Almoxarifado Central', 3, TRUE),
-    ('Recursos Humanos', 4, TRUE);
+    INSERT INTO setores (nome, responsavel_id, flag_almoxarifado, ativo) VALUES
+    ('Departamento de Tecnologia', 1, FALSE, TRUE),
+    ('Financeiro', 2, FALSE, TRUE),
+    ('Almoxarifado Central', 3, TRUE, TRUE),
+    ('Recursos Humanos', 4, FALSE, TRUE);
 
     -- 4. Inserir Bens
     INSERT INTO bens (nome, codigo_tombamento, valor, status, ativo, data_cadastro) VALUES

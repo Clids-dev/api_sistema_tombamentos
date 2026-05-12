@@ -3,7 +3,7 @@ from typing import Optional
 
 from fastapi import APIRouter
 from modules.movimentacao.schemas import Movimentacao
-from modules.movimentacao.schemas import MovimentacaoCreate
+from modules.movimentacao.schemas import MovimentacaoCreate, MovimentacaoDetailed
 from modules.movimentacao.service import MovimentacaoService
 from modules.movimentacao import schemas
 
@@ -13,6 +13,16 @@ router = APIRouter(prefix="/movimentacao", tags=["Movimentacao"])
 def get_movimentacoes():
     service = MovimentacaoService()
     return service.get_movimentacoes()
+
+@router.get("/detailed/", response_model=list[MovimentacaoDetailed])
+def get_detailed_movimentacoes():
+    service = MovimentacaoService()
+    return service.get_detailed_movimentacoes()
+
+@router.get("/bem/{codigo}", response_model=list[MovimentacaoDetailed])
+def get_movimentacoes_por_bem(codigo: str):
+    service = MovimentacaoService()
+    return service.get_movimentacoes_por_bem(codigo)
 
 @router.get("/{id}/", response_model=Optional[schemas.Movimentacao])
 def get_movimentacao_by_id(id: int):
