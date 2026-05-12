@@ -33,9 +33,9 @@ def get_bem_detalhes(id: int):
     return service.get_bem_detalhes(id)
 
 @router.put("/{id}/", response_model=Optional[schemas.Bem])
-def update_bem(id : int, nome: str, status: str):
+def update_bem(id : int, nome: str, tipo: str, status: str):
     service = BemService()
-    return service.put_bem(id, nome, status)
+    return service.put_bem(id, nome, tipo, status)
 
 @router.delete("/{id}/", response_model=BemDeleteResponse)
 def delete_bem(id: int):
@@ -82,4 +82,3 @@ def desativar_bem(id: int):
 def reativar_bem(id: int):
     service = BemService()
     return service.reativar_bem(id)
-

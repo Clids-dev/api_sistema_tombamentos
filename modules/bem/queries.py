@@ -1,10 +1,10 @@
-QUERY_BENS = "SELECT id, nome, codigo_tombamento, valor, status, ativo FROM bens"
+QUERY_BENS = "SELECT id, nome, tipo, codigo_tombamento, valor, status, ativo FROM bens"
 
-QUERY_BEM_ID = "SELECT id, nome, codigo_tombamento, valor, status, ativo FROM bens WHERE id = %s"
+QUERY_BEM_ID = "SELECT id, nome, tipo, codigo_tombamento, valor, status, ativo FROM bens WHERE id = %s"
 
 QUERY_BEM_DETALHES = """
     SELECT 
-        b.id, b.nome, b.codigo_tombamento, b.valor, b.status, b.ativo,
+        b.id, b.nome, b.tipo, b.codigo_tombamento, b.valor, b.status, b.ativo,
         s.nome as setor_atual,
         m.data_movimentacao as data_ultima_movimentacao,
         m.justificativa
@@ -19,19 +19,31 @@ QUERY_BEM_DETALHES = """
     WHERE b.id = %s
 """
 
-QUERY_CREATE_BEM = ('INSERT INTO bens (nome, codigo_tombamento, valor, status, ativo) '
-                    'VALUES (%s, %s, %s, %s, %s) '
-                    'RETURNING id;')
+QUERY_CREATE_BEM =   """
+                        UPDATE tipos
+                        SET contador = contador + 1
+                        WHERE nome ILIKE (%s)
 
-QUERY_PUT_BEM = ("UPDATE bens SET nome = %s, status = %s "
+                        SELECT
+                            CONCAT(prefixo, '-', LPAD((contador + 1)::text, 4, '0')) AS codigo_tombamento
+                        FROM
+                            tipos_equipamento
+                        WHERE
+                            nome ILIKE (%s);
+                        
+                        INSERT INTO bens (nome, codigo_tombamento, valor, status, ativo) 
+                        VALUES (%s, codigo_tombamento, %s, %s, %s) 
+                        RETURNING id;"""
+
+QUERY_PUT_BEM = ("UPDATE bens SET nome = %s, status = %s, tipo = %s "
                  "WHERE bens.id = %s "
-                 "RETURNING id, nome, codigo_tombamento, valor, status, ativo")
+                 "RETURNING id, nome, tipo, codigo_tombamento, valor, status, ativo")
 
 QUERY_DELETE_BEM = """UPDATE bens SET ativo = FALSE 
                       WHERE bens.id = (%s) 
-                      RETURNING id, nome, codigo_tombamento, valor, status, ativo"""
+                      RETURNING id, nome, tipo, codigo_tombamento, valor, status, ativo"""
 
-QUERY_BEM_CODTOMB = ("SELECT id, nome, codigo_tombamento, valor, status, ativo "
+QUERY_BEM_CODTOMB = ("SELECT id, nome, tipo, codigo_tombamento, valor, status, ativo "
                      "FROM bens "
                      "WHERE codigo_tombamento = %s")
 
@@ -40,7 +52,7 @@ QUERY_HISTORICO = """SELECT id, bem_id, setor_origem_id, setor_destino_id, data_
                      ORDER BY data_movimentacao DESC"""
 
 QUERY_BENS_POR_SETOR = """
-                       SELECT b.id, b.nome, b.codigo_tombamento,b.valor, b.status, b.ativo, b.status
+                       SELECT b.id, b.nome, b.tipo, b.codigo_tombamento,b.valor, b.status, b.ativo
                        FROM bens b
                        JOIN (SELECT DISTINCT ON (bem_id) bem_id, setor_destino_id 
                              FROM movimentacoes WHERE ativo = TRUE 
