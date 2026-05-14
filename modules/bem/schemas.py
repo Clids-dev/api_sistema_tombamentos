@@ -5,6 +5,7 @@ from pydantic import BaseModel
 class Bem(BaseModel):
     id: int
     nome: str
+    tipo: str
     codigo_tombamento: str
     valor: float
     status: str
@@ -12,7 +13,7 @@ class Bem(BaseModel):
 
 class BemCreate(BaseModel):
     nome: str
-    codigo_tombamento: str
+    tipo: str
     valor: float
     status: str
 
