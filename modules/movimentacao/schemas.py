@@ -24,3 +24,13 @@ class MovimentacaoUpdate(BaseModel):
     setor_destino_id: int
     data: datetime
     justificativa: Optional[str] = None
+
+class MovimentacaoDetailed(BaseModel):
+    id: int
+    bem_nome: str
+    codigo_tombamento: str
+    setor_origem_nome: Optional[str] = None
+    setor_destino_nome: str
+    data_movimentacao: datetime
+    justificativa: Optional[str] = None
+    ativo: bool

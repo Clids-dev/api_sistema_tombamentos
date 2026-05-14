@@ -60,7 +60,8 @@ class SetorService:
             raise HTTPException(status_code=400, detail=str(e))
 
     def delete_setor(self, id: int):
-        if not self.get_setor_by_id(id):
-            raise HTTPException(status_code=404, detail=f"Setor com id {id} não encontrado")
         repository = SetorRepository()
-        return repository.get_id(id)
+        setor = repository.get_id(id)
+        if not setor:
+            raise HTTPException(status_code=404, detail=f"Setor com id {id} não encontrado")
+        return repository.delete(id)

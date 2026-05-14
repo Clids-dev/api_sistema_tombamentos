@@ -43,6 +43,7 @@
         id SERIAL PRIMARY KEY,
         nome VARCHAR(100) NOT NULL,
         responsavel_id INTEGER REFERENCES responsaveis(id),
+        flag_almoxarifado BOOLEAN NOT NULL DEFAULT FALSE,
         ativo BOOLEAN NOT NULL DEFAULT TRUE
     );
 

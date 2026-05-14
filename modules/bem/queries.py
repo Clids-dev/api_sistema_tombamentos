@@ -7,7 +7,8 @@ QUERY_BEM_DETALHES = """
         b.id, b.nome, b.tipo, b.codigo_tombamento, b.valor, b.status, b.ativo,
         s.nome as setor_atual,
         m.data_movimentacao as data_ultima_movimentacao,
-        m.justificativa
+        m.justificativa,
+        s.id as id_setor_atual
     FROM bens b
     LEFT JOIN (
         SELECT DISTINCT ON (bem_id) bem_id, setor_destino_id, data_movimentacao, justificativa
@@ -48,7 +49,7 @@ QUERY_BEM_CODTOMB = ("SELECT id, nome, tipo, codigo_tombamento, valor, status, a
                      "WHERE codigo_tombamento = %s")
 
 QUERY_HISTORICO = """SELECT id, bem_id, setor_origem_id, setor_destino_id, data_movimentacao, ativo 
-                     FROM movimentacoes WHERE id = %s 
+                     FROM movimentacoes WHERE bem_id = %s 
                      ORDER BY data_movimentacao DESC"""
 
 QUERY_BENS_POR_SETOR = """

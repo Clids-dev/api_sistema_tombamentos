@@ -17,6 +17,48 @@ class MovimentacaoRepository:
             )
         return results
 
+    def get_detailed(self):
+        db = DataBase()
+        rows = db.execute(queries.QUERY_MOVIMENTACOES_DETALHADAS)
+        results = []
+        if not rows:
+            return results
+        for row in rows:
+            results.append(
+                schemas.MovimentacaoDetailed(
+                    id=row[0],
+                    bem_nome=row[1],
+                    codigo_tombamento=row[2],
+                    setor_origem_nome=row[3],
+                    setor_destino_nome=row[4],
+                    data_movimentacao=row[5],
+                    justificativa=row[6],
+                    ativo=bool(row[7])
+                )
+            )
+        return results
+
+    def get_by_bem_codigo(self, codigo: str):
+        db = DataBase()
+        rows = db.execute(queries.QUERY_MOVIMENTACOES_POR_BEM_CODIGO, (codigo,))
+        results = []
+        if not rows:
+            return results
+        for row in rows:
+            results.append(
+                schemas.MovimentacaoDetailed(
+                    id=row[0],
+                    bem_nome=row[1],
+                    codigo_tombamento=row[2],
+                    setor_origem_nome=row[3],
+                    setor_destino_nome=row[4],
+                    data_movimentacao=row[5],
+                    justificativa=row[6],
+                    ativo=bool(row[7])
+                )
+            )
+        return results
+
     def get_id(self, id: int):
         db = DataBase()
         rows = db.execute(queries.QUERY_MOVIMENTACOES_ID, (id,))
@@ -27,7 +69,7 @@ class MovimentacaoRepository:
 
     def save(self, movimentacao: MovimentacaoCreate):
         db = DataBase()
-        result = db.commit(queries.QUERY_CREATE_MOVIMENTACOES, (movimentacao.bem_id, movimentacao.setor_origem_id, movimentacao.setor_destino_id, datetime.now()))
+        result = db.commit(queries.QUERY_CREATE_MOVIMENTACOES, (movimentacao.bem_id, movimentacao.setor_origem_id, movimentacao.setor_destino_id, datetime.now(), movimentacao.justificativa))
         return Movimentacao(id=result[0], bem_id=result[1], setor_origem_id=result[2], setor_destino_id=result[3], data=result[4], ativo=result[5])
 
     def put(self, id: int, data: datetime, setor_origem_id: int, justificativa: Optional[str] = None):

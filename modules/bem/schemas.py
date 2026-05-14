@@ -24,6 +24,7 @@ class BemDeleteResponse(BaseModel):
 
 class BemDetalhes(Bem):
     setor_atual: Optional[str] = None
+    id_setor_atual: Optional[int] = None
     data_ultima_movimentacao: Optional[datetime] = None
     justificativa: Optional[str] = None
 
