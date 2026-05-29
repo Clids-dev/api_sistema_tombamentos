@@ -32,10 +32,10 @@ class BemService:
         repository = BemRepository()
         return repository.save(bem)
 
-    def put_bem(self, id: int, novo_nome: str, status: str):
+    def put_bem(self, id: int, novo_nome: str, novo_tipo: str, status: str):
         try:
             repository = BemRepository()
-            return repository.put(id, novo_nome, status)
+            return repository.put(id, novo_nome, novo_tipo, status)
         except errors.NoDataFound:
             raise HTTPException(status_code=404, detail=f"Bem com id {id} não encontrada")
         except errors.UniqueViolation:
