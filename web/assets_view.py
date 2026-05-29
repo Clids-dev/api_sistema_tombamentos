@@ -11,7 +11,8 @@ def tela_bens(request: Request):
     return templates.TemplateResponse("bens.html", {
         "request": request,
         "username": nome,
-        "tipo": tipo
+        "tipo": tipo,
+        "active_page": "bens"
     })
 
 @router.get("/movimentacao")
@@ -21,5 +22,6 @@ def tela_movimentacao(request: Request):
     return templates.TemplateResponse("movimentacao.html", {
         "request": request,
         "username": nome,
-        "tipo": tipo
+        "tipo": tipo,
+        "active_page": "movimentacao"
     })

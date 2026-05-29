@@ -3,84 +3,69 @@
 This project is a **Sistema de Tombamento** (Asset Tracking System) developed to manage corporate assets, their locations, and movements. It provides a web interface and a REST API for CRUD operations on assets, categories, sectors, and personnel.
 
 ## Technology Stack
-- **Framework:** [FastAPI](https://fastapi.tiangolo.com/)
-- **Runtime:** Python 3.x
+- **Backend:** [FastAPI](https://fastapi.tiangolo.com/) (Python 3.x)
 - **Database:** PostgreSQL (using `psycopg2-binary`)
-- **Frontend:** HTML templates with [Jinja2](https://jinja.palletsprojects.com/)
+- **Frontend:** HTML5, Jinja2 Templates, Bootstrap 5
+- **JavaScript:** ES6+ Modules (Modular and Decoupled)
 - **Validation:** [Pydantic](https://docs.pydantic.dev/)
-- **Configuration:** `python-dotenv`
 
 ## Project Architecture
-The project follows a modular structure, where each domain entity resides in the `modules/` directory.
+The project follows a modular structure where each domain entity resides in the `modules/` directory.
 
 ### Directory Structure
-- `api/routes/`: FastAPI router definitions (controllers).
+- `api/v1/`: FastAPI router definitions (JSON API).
+- `web/`: FastAPI routes for rendering Jinja2 templates (UI).
 - `core/`:
-  - `db.py`: Custom `DataBase` class for connection management and raw SQL execution.
-  - `settings.py`: Application configurations (DB credentials, etc.).
+  - `database.py`: Custom `DataBase` class for connection pooling and raw SQL execution.
+  - `config.py`: Application configurations (DB credentials, etc.).
 - `modules/<module_name>/`:
   - `repository.py`: Data access layer (SQL execution).
   - `service.py`: Business logic layer.
   - `schemas.py`: Pydantic models for validation.
-  - `querys.py`: Raw SQL query definitions.
-- `static/`: Static assets (CSS, images).
-- `templates/`: Jinja2 HTML templates.
+  - `queries.py`: Raw SQL query definitions.
+- `static/`:
+  - `css/`: Global styles (`style.css`).
+  - `js/`: Modular JavaScript logic (`utils.js`, `bens.js`, etc.).
+- `templates/`:
+  - `base.html`: Master template (Navbar, Sidebar, shared structure).
+  - `<page>.html`: Page-specific content inheriting from `base.html`.
 - `main.py`: Application entry point.
+
+## Development Conventions
+
+### Frontend & UI
+- **Template Inheritance:** All pages must extend `base.html` using `{% extends "base.html" %}`.
+- **JavaScript Modules:** Use `<script type="module">` to keep logic isolated and reusable.
+- **DOM Access:** Use the `$` helper from `utils.js` for selectors (e.g., `$('#id')`).
+- **API Calls:** Always use the `api` helper from `utils.js` (e.g., `await api.get('/url')`) to ensure consistent error handling and JSON parsing.
+- **Efficient Rendering:** Prefer `.map().join('')` over `innerHTML +=` in loops for better performance.
+
+### Data Layer
+- **Raw SQL:** No ORM used. All database interactions are via raw SQL in `queries.py`.
+- **Soft Deletes:** Deletion is handled by setting the `ativo` column to `FALSE`.
+- **Naming Conventions:** Assets (Bens) have automatic tracking codes generated as `SIGLA-00X`, where `SIGLA` is a normalized, non-accented 3-letter code from the Category.
+
+### Authentication & Authorization
+- Session management via cookies (`username`, `tipo`).
+- Access levels: `admin` and `comum`.
+
+## Core Entities
+- **Bem (Asset):** Linked to a Category and a Sector (via movement).
+- **Categoria (Category):** Defines the asset type and prefix for its tracking code (sigla).
+- **Setor (Sector):** Physical or logical location of an asset.
+- **Responsável (Personnel):** Person in charge of a sector or asset.
+- **Movimentação (Movement):** Auditable log of asset transfers between sectors.
+- **Usuário (User):** System credentials.
 
 ## Building and Running
 
 ### Prerequisites
 - Python 3.x
-- PostgreSQL database
+- PostgreSQL
 
-### Installation
-1. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # Linux/Mac
-   # or
-   venv\Scripts\activate     # Windows
-   ```
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-### Database Setup
-1. Create a database named `sistema_tombamento` in PostgreSQL.
-2. Update `core/settings.py` with your database credentials.
-3. Run the initialization script:
-   ```bash
-   psql -U <your_user> -d sistema_tombamento -f tabelasDados.sql
-   ```
-
-### Execution
-Run the development server:
-```bash
-uvicorn main:app --reload
-```
-The API will be available at `http://127.0.0.1:8000`.
-Interactive docs: `http://127.0.0.1:8000/docs`.
-
-## Development Conventions
-
-### Data Layer
-- **Raw SQL:** The project avoids ORMs. All database interactions are done via raw SQL stored in `querys.py` files within each module.
-- **Soft Deletes:** Deletion is typically handled as a soft delete by setting the `ativo` column to `FALSE`.
-- **Database Helper:** Always use the `DataBase` class from `core/db.py` to ensure connections are properly opened and closed.
-
-### API & Routing
-- Route files in `api/routes/` should ideally only handle request/response logic and delegate business logic to the corresponding `Service` class.
-- Frontend routes (rendering templates) are separated from pure API routes (e.g., `bensView_route.py` vs `bem_route.py`).
-
-### Authentication & Authorization
-- Basic session management is implemented using cookies (`username`, `tipo`).
-- Users are categorized as `admin` or `comum`.
-
-## Core Entities
-- **Bem (Asset):** The main entity representing an item being tracked.
-- **Categoria (Category):** Classification for assets.
-- **Setor (Sector):** Locations where assets are placed.
-- **Responsável (Personnel):** People responsible for assets or sectors.
-- **Movimentação (Movement):** Records of asset transfers between sectors.
-- **Usuário (User):** System users for authentication.
+### Setup
+1. `python -m venv venv`
+2. `source venv/bin/activate`
+3. `pip install -r requirements.txt`
+4. Initialize DB with `tabelasDados.sql`.
+5. Run: `uvicorn main:app --reload`

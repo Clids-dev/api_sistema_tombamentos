@@ -19,9 +19,11 @@ def get_index(request: Request):
     bens_ativos = service.quantidade_bens_ativos()
     bens_inativos = service.quantidade_bens_inativos()
 
-    recente1 = service.bens_recentes()[0][1]
-    recente2 = service.bens_recentes()[1][1]
-    recente3 = service.bens_recentes()[2][1]
+    recentes_raw = service.bens_recentes()
+    # Pega até 3 nomes, ou preenche com "---" se não houver
+    recente1 = recentes_raw[0][1] if len(recentes_raw) > 0 else "---"
+    recente2 = recentes_raw[1][1] if len(recentes_raw) > 1 else "---"
+    recente3 = recentes_raw[2][1] if len(recentes_raw) > 2 else "---"
 
     categorias = cat_service.get_categorias()
 
@@ -37,8 +39,7 @@ def get_index(request: Request):
             "recente1": recente1,
             "recente2": recente2,
             "recente3": recente3,
-            "categorias": categorias
+            "categorias": categorias,
+            "active_page": "index"
         }
     )
-
-

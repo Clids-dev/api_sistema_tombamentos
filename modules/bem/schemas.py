@@ -9,12 +9,14 @@ class Bem(BaseModel):
     valor: float
     status: str
     ativo: bool
+    id_categoria: Optional[int] = None
 
 class BemCreate(BaseModel):
     nome: str
     codigo_tombamento: str
     valor: float
     status: str
+    id_categoria: int
 
 class BemDeleteResponse(BaseModel):
     message: str
@@ -26,4 +28,4 @@ class BemDetalhes(Bem):
     id_setor_atual: Optional[int] = None
     data_ultima_movimentacao: Optional[datetime] = None
     justificativa: Optional[str] = None
-
+    categoria_nome: Optional[str] = None
