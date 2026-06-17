@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 from core.database import DataBase
 from modules.movimentacao.schemas import MovimentacaoCreate, Movimentacao
-from . import queries
+from . import queries, schemas
 
 class MovimentacaoRepository:
     def get_all(self):
@@ -13,7 +13,14 @@ class MovimentacaoRepository:
             return results
         for row in rows:
             results.append(
-                Movimentacao(id=row[0], bem_id=row[1], setor_origem_id=row[2], setor_destino_id=row[3], data=row[4], ativo=bool(row[5]))
+                Movimentacao(
+                    id=row[0], 
+                    bem_id=row[1], 
+                    setor_origem_id=row[2], 
+                    setor_destino_id=row[3], 
+                    data=row[4], 
+                    ativo=bool(row[5])
+                )
             )
         return results
 
@@ -65,16 +72,32 @@ class MovimentacaoRepository:
         if not rows:
             return None
         row = rows[0]
-        return Movimentacao(id=row[0], bem_id=row[1], setor_origem_id=row[2], setor_destino_id=row[3], data=row[4], ativo=bool(row[5]))
+        return Movimentacao(
+            id=row[0], 
+            bem_id=row[1], 
+            setor_origem_id=row[2], 
+            setor_destino_id=row[3], 
+            data=row[4], 
+            ativo=bool(row[5])
+        )
 
     def save(self, movimentacao: MovimentacaoCreate):
         db = DataBase()
         result = db.commit(queries.QUERY_CREATE_MOVIMENTACOES, (movimentacao.bem_id, movimentacao.setor_origem_id, movimentacao.setor_destino_id, datetime.now(), movimentacao.justificativa))
-        return Movimentacao(id=result[0], bem_id=result[1], setor_origem_id=result[2], setor_destino_id=result[3], data=result[4], ativo=result[5])
+        if result:
+            return Movimentacao(
+                id=result[0], 
+                bem_id=result[1], 
+                setor_origem_id=result[2], 
+                setor_destino_id=result[3], 
+                data=result[4], 
+                ativo=result[5]
+            )
+        return None
 
-    def put(self, id: int, data: datetime, setor_origem_id: int, justificativa: Optional[str] = None):
+    def put(self, id: int, data: datetime, setor_destino_id: int, justificativa: Optional[str] = None):
         db = DataBase()
-        movimentacao = db.commit(queries.QUERY_PUT_MOVIMENTACAO, (data, setor_origem_id, justificativa, id))
+        movimentacao = db.commit(queries.QUERY_PUT_MOVIMENTACAO, (data, setor_destino_id, justificativa, id))
         if movimentacao:
             return Movimentacao(
                 id=movimentacao[0],

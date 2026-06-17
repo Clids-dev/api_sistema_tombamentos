@@ -161,8 +161,8 @@ $("#mov_codigo_bem").onchange = async (e) => {
         $("#btnSalvarMov").disabled = false;
         select.innerHTML = '<option value="">Selecione o destino</option>' + 
             todosSetores
-                .filter(s => s.setor !== detalhes.setor_atual)
-                .map(s => `<option value="${s.id_setor}">${s.setor}</option>`)
+                .filter(s => s.nome !== detalhes.setor_atual)
+                .map(s => `<option value="${s.id}">${s.nome}</option>`)
                 .join('');
 
     } catch (error) {

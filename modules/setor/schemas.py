@@ -17,9 +17,10 @@ class SetorCreate(BaseModel):
     flag_almoxarifado: bool = False
 
 class SetorFlat(BaseModel):
-    id_setor: int
-    setor: str
-    id_responsavel: Optional[int] = None
-    responsavel: Optional[str] = None
+    id: int
+    nome: str
+    responsavel_id: Optional[int] = None
+    responsavel_nome: Optional[str] = None
     cargo_responsavel: Optional[str] = None
     flag_almoxarifado: bool = False
+    ativo: bool

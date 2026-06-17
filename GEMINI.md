@@ -57,6 +57,25 @@ The project follows a modular structure where each domain entity resides in the 
 - **Movimentação (Movement):** Auditable log of asset transfers between sectors.
 - **Usuário (User):** System credentials.
 
+## Roadmap para Finalização do Projeto
+
+### 1. Interface de Gestão (UI/UX)
+- [x] **Gestão de Bens:** Listagem, Detalhes, Filtros e Paginação.
+- [x] **Movimentações:** Registro de transferências e histórico básico.
+- [x] **Gestão de Categorias:** Implementar página `/categoria` (HTML/JS) para CRUD de categorias.
+- [x] **Gestão de Setores e Responsáveis:** Implementar interfaces para gerenciar os departamentos e as pessoas responsáveis.
+
+### 2. Recursos Avançados
+- [x] **Linha do Tempo de Ativos:** Visualização gráfica da trajetória de um bem entre setores no modal de detalhes.
+- [x] **Geração de Relatórios:** Exportação do inventário para PDF/Excel por setor ou categoria.
+- [ ] **Etiquetas QR Code:** Funcionalidade para gerar etiquetas de patrimônio com QR Code. (PULADO)
+- [x] **Dashboard Estatístico:** Adicionar gráficos (Chart.js) de distribuição por categoria e status.
+
+### 3. Integridade e Segurança
+- [ ] **Auditoria de Dados:** Registro de log de quem alterou metadados de um bem.
+- [ ] **Anexos e Fotos:** Upload de imagens ou documentos (notas fiscais) vinculados ao bem.
+- [ ] **Regras de Negócio:** Validações de movimentação baseadas no status do bem.
+
 ## Building and Running
 
 ### Prerequisites

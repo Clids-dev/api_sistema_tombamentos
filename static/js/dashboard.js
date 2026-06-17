@@ -5,6 +5,7 @@ import { $, api } from '/static/js/utils.js';
  */
 
 async function init() {
+    console.log("Iniciando Dashboard...");
     await Promise.all([
         renderizarGraficoCategorias(),
         renderizarGraficoStatus(),
@@ -15,13 +16,22 @@ async function init() {
 async function renderizarGraficoCategorias() {
     try {
         const stats = await api.get('/api/v1/bem/stats/categoria');
+        console.log("Stats Categorias:", stats);
+
+        if (!stats || stats.length === 0) {
+            console.warn("Nenhum dado de categoria encontrado.");
+            return;
+        }
+
         const labels = stats.map(s => s[0]);
         const data = stats.map(s => s[1]);
 
         const ctx = document.getElementById('chartCategorias');
         if (!ctx) return;
 
-        new Chart(ctx, {
+        if (window.chartCat) window.chartCat.destroy();
+
+        window.chartCat = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels,
@@ -54,24 +64,42 @@ async function renderizarGraficoCategorias() {
 async function renderizarGraficoStatus() {
     try {
         const stats = await api.get('/api/v1/bem/stats/status');
+        console.log("Stats Status:", stats);
+
+        if (!stats || stats.length === 0) {
+            console.warn("Nenhum dado de status encontrado.");
+            return;
+        }
+
         const labels = stats.map(s => s[0]);
         const data = stats.map(s => s[1]);
 
         const ctx = document.getElementById('chartStatus');
         if (!ctx) return;
 
-        new Chart(ctx, {
+        if (window.chartStat) window.chartStat.destroy();
+
+        // Mapeamento semântico de cores
+        const colorMap = {
+            'disponivel': '#42b72a', // Verde
+            'em uso': '#820ad1',      // Roxo
+            'manutencao': '#f1c40f',  // Amarelo
+            'baixado': '#f02849',     // Vermelho
+            'inativo': '#f02849'      // Vermelho
+        };
+
+        const backgroundColors = labels.map(label => {
+            const key = label ? label.toLowerCase() : '';
+            return colorMap[key] || '#adb5bd'; // Cinza como fallback
+        });
+
+        window.chartStat = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: labels,
                 datasets: [{
                     data: data,
-                    backgroundColor: [
-                        '#42b72a', // Sucesso
-                        '#820ad1', // Primária
-                        '#f1c40f', // Alerta
-                        '#f02849'  // Perigo
-                    ],
+                    backgroundColor: backgroundColors,
                     hoverOffset: 4,
                     borderWidth: 0
                 }]
@@ -93,16 +121,23 @@ async function renderizarGraficoStatus() {
 async function renderizarUltimosRegistros() {
     try {
         const bens = await api.get('/api/v1/bem/');
-        // Ordena por ID desc e pega os 5 primeiros
-        const recentes = bens.sort((a, b) => b.id - a.id).slice(0, 5);
-        
+        console.log("Bens carregados para tabela:", bens?.length);
+
         const tbody = $('#listaRecentes');
         if (!tbody) return;
 
+        if (!bens || bens.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">Nenhum registro encontrado.</td></tr>';
+            return;
+        }
+
+        // Ordena por ID desc e pega os 5 primeiros
+        const recentes = [...bens].sort((a, b) => (b.id || 0) - (a.id || 0)).slice(0, 5);
+        
         tbody.innerHTML = recentes.map(bem => `
             <tr>
                 <td class="ps-4"><span class="text-muted">#${bem.id}</span></td>
-                <td><span class="fw-bold text-dark">${bem.nome}</span></td>
+                <td><span class="fw-bold text-dark">${bem.nome || 'Sem nome'}</span></td>
                 <td><span class="badge ${bem.ativo ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'} rounded-pill px-3">${bem.ativo ? 'Ativo' : 'Inativo'}</span></td>
                 <td class="text-end pe-4">
                     <a href="/bens" class="btn btn-sm btn-light"><i class="fas fa-arrow-right"></i></a>
@@ -111,6 +146,10 @@ async function renderizarUltimosRegistros() {
         `).join('');
     } catch (error) {
         console.error("Erro ao carregar últimos registros:", error);
+        const tbody = $('#listaRecentes');
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-danger">Erro ao carregar dados.</td></tr>';
+        }
     }
 }
 
