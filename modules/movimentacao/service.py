@@ -34,6 +34,33 @@ class MovimentacaoService:
             if movimentacao.setor_origem_id is not None and movimentacao.setor_origem_id == movimentacao.setor_destino_id:
                 raise HTTPException(status_code=400, detail="Setor de origem e destino não podem ser iguais.")
             
+            # --- Validação de Regras de Negócio ---
+            bem_repository = BemRepository()
+            bem = bem_repository.get_by_id(movimentacao.bem_id)
+            
+            if bem is None:
+                raise HTTPException(status_code=404, detail=f"Bem com id {movimentacao.bem_id} não encontrado")
+
+            # 1. Não permite movimentar bem inativo (Baixado)
+            if not bem.ativo:
+                raise HTTPException(
+                    status_code=400, 
+                    detail="Este bem está baixado/inativo e não pode ser movimentado."
+                )
+
+            # 2. Não permite movimentar bem que esteja em manutenção para uso comum
+            # (Aqui poderíamos validar o tipo do setor de destino, mas vamos simplificar com o status)
+            if bem.status.lower() == 'manutenção' or bem.status.lower() == 'manutencao':
+                # Regra: Se está em manutenção, só pode ser movimentado se a justificativa contiver 'concluído'
+                # Ou simplesmente impedir se o status não for alterado primeiro.
+                # Vamos seguir a regra: "Bem em manutenção não pode ser movimentado sem finalizar o reparo"
+                if not movimentacao.justificativa or "concluído" not in movimentacao.justificativa.lower():
+                    raise HTTPException(
+                        status_code=400, 
+                        detail="Equipamentos em manutenção não podem ser movimentados sem a conclusão do reparo (informe na justificativa)."
+                    )
+
+            # 3. Validação de Setores
             setor_repository = SetorRepository()
             if movimentacao.setor_origem_id is not None:
                 if setor_repository.get_id(movimentacao.setor_origem_id) is None:
@@ -41,10 +68,6 @@ class MovimentacaoService:
             
             if setor_repository.get_id(movimentacao.setor_destino_id) is None:
                 raise HTTPException(status_code=404, detail=f"Setor de destino com id {movimentacao.setor_destino_id} não encontrado")
-            
-            bem_repository = BemRepository()
-            if bem_repository.get_id(movimentacao.bem_id) is None:
-                raise HTTPException(status_code=404, detail=f"Bem com id {movimentacao.bem_id} não encontrado")
             
             repository = MovimentacaoRepository()
             return repository.save(movimentacao)
