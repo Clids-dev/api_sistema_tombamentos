@@ -58,3 +58,14 @@ def tela_responsaveis(request: Request):
         "tipo": tipo,
         "active_page": "responsaveis"
     })
+
+@router.get("/relatorios")
+def tela_relatorios(request: Request):
+    nome = request.cookies.get("username")
+    tipo = request.cookies.get("tipo")
+    return templates.TemplateResponse("relatorios.html", {
+        "request": request,
+        "username": nome,
+        "tipo": tipo,
+        "active_page": "relatorios"
+    })
