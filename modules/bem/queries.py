@@ -1,10 +1,10 @@
-QUERY_BENS = "SELECT id, nome, codigo_tombamento, valor, status, ativo, id_categoria FROM bens"
+QUERY_BENS = "SELECT id, nome, tipo, codigo_tombamento, valor, status, ativo, id_categoria FROM bens"
 
-QUERY_BEM_ID = "SELECT id, nome, codigo_tombamento, valor, status, ativo, id_categoria FROM bens WHERE id = %s"
+QUERY_BEM_ID = "SELECT id, nome, tipo, codigo_tombamento, valor, status, ativo, id_categoria FROM bens WHERE id = %s"
 
 QUERY_BEM_DETALHES = """
     SELECT 
-        b.id, b.nome, b.codigo_tombamento, b.valor, b.status, b.ativo,
+        b.id, b.nome, b.tipo, b.codigo_tombamento, b.valor, b.status, b.ativo,
         s.nome as setor_atual,
         m.data_movimentacao as data_ultima_movimentacao,
         m.justificativa,
@@ -23,19 +23,19 @@ QUERY_BEM_DETALHES = """
     WHERE b.id = %s
 """
 
-QUERY_CREATE_BEM = ('INSERT INTO bens (nome, codigo_tombamento, valor, status, ativo, id_categoria) '
-                    'VALUES (%s, %s, %s, %s, %s, %s) '
+QUERY_CREATE_BEM = ('INSERT INTO bens (nome, tipo, codigo_tombamento, valor, status, ativo, id_categoria) '
+                    'VALUES (%s, %s, %s, %s, %s, %s, %s) '
                     'RETURNING id;')
 
 QUERY_PUT_BEM = ("UPDATE bens SET nome = %s, status = %s "
                  "WHERE bens.id = %s "
-                 "RETURNING id, nome, codigo_tombamento, valor, status, ativo, id_categoria")
+                 "RETURNING id, nome, tipo, codigo_tombamento, valor, status, ativo, id_categoria")
 
 QUERY_DELETE_BEM = """UPDATE bens SET ativo = FALSE 
                       WHERE bens.id = (%s) 
-                      RETURNING id, nome, codigo_tombamento, valor, status, ativo, id_categoria"""
+                      RETURNING id, nome, tipo, codigo_tombamento, valor, status, ativo, id_categoria"""
 
-QUERY_BEM_CODTOMB = ("SELECT id, nome, codigo_tombamento, valor, status, ativo, id_categoria "
+QUERY_BEM_CODTOMB = ("SELECT id, nome, tipo, codigo_tombamento, valor, status, ativo, id_categoria "
                      "FROM bens "
                      "WHERE codigo_tombamento = %s")
 
@@ -44,7 +44,7 @@ QUERY_HISTORICO = """SELECT id, bem_id, setor_origem_id, setor_destino_id, data_
                      ORDER BY data_movimentacao DESC"""
 
 QUERY_BENS_POR_SETOR = """
-                       SELECT b.id, b.nome, b.codigo_tombamento,b.valor, b.status, b.ativo, b.id_categoria
+                       SELECT b.id, b.nome, b.tipo, b.codigo_tombamento, b.valor, b.status, b.ativo, b.id_categoria
                        FROM bens b
                        JOIN (SELECT DISTINCT ON (bem_id) bem_id, setor_destino_id 
                              FROM movimentacoes WHERE ativo = TRUE 
@@ -73,7 +73,7 @@ QUERY_QUANTIDADE_BENS_ATIVOS = """SELECT COUNT (*) FROM bens
 QUERY_QUANTIDADE_BENS_INATIVOS = """SELECT COUNT (*) FROM bens 
                                     WHERE ativo = FALSE;"""
 
-QUERY_RECENTES = """SELECT id, nome, codigo_tombamento, valor, status, ativo, data_cadastro, id_categoria
+QUERY_RECENTES = """SELECT id, nome, tipo, codigo_tombamento, valor, status, ativo, data_cadastro, id_categoria
                     FROM bens 
                     ORDER BY data_cadastro 
                     DESC LIMIT 3;"""

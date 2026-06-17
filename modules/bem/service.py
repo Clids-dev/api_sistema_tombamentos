@@ -13,11 +13,11 @@ class BemService:
 
     def get_stats_categoria(self):
         db = DataBase()
-        return db.execute_query(QUERY_STATS_CATEGORIA)
+        return db.execute(QUERY_STATS_CATEGORIA)
 
     def get_stats_status(self):
         db = DataBase()
-        return db.execute_query(QUERY_STATS_STATUS)
+        return db.execute(QUERY_STATS_STATUS)
 
     def get_bem_by_id(self, id: int):
         try:

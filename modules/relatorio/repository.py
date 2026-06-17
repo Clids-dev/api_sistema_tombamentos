@@ -26,4 +26,4 @@ class RelatorioRepository:
 
         query += " ORDER BY b.codigo_tombamento ASC"
         
-        return self.db.execute_query(query, tuple(params))
+        return self.db.execute(query, tuple(params))
