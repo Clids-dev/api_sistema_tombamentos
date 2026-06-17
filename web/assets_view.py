@@ -36,3 +36,25 @@ def tela_categoria(request: Request):
         "tipo": tipo,
         "active_page": "categoria"
     })
+
+@router.get("/setores")
+def tela_setores(request: Request):
+    nome = request.cookies.get("username")
+    tipo = request.cookies.get("tipo")
+    return templates.TemplateResponse("setores.html", {
+        "request": request,
+        "username": nome,
+        "tipo": tipo,
+        "active_page": "setores"
+    })
+
+@router.get("/responsaveis")
+def tela_responsaveis(request: Request):
+    nome = request.cookies.get("username")
+    tipo = request.cookies.get("tipo")
+    return templates.TemplateResponse("responsaveis.html", {
+        "request": request,
+        "username": nome,
+        "tipo": tipo,
+        "active_page": "responsaveis"
+    })
