@@ -25,3 +25,14 @@ def tela_movimentacao(request: Request):
         "tipo": tipo,
         "active_page": "movimentacao"
     })
+
+@router.get("/categoria")
+def tela_categoria(request: Request):
+    nome = request.cookies.get("username")
+    tipo = request.cookies.get("tipo")
+    return templates.TemplateResponse("categoria.html", {
+        "request": request,
+        "username": nome,
+        "tipo": tipo,
+        "active_page": "categoria"
+    })
