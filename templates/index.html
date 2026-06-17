@@ -63,10 +63,38 @@
     </div>
 </div>
 
+<!-- Gráficos Section -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-6">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-header bg-white border-0 p-4 pb-0">
+                <h5 class="fw-bold mb-0">Distribuição por Categoria</h5>
+            </div>
+            <div class="card-body p-4">
+                <div style="height: 300px;">
+                    <canvas id="chartCategorias"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-header bg-white border-0 p-4 pb-0">
+                <h5 class="fw-bold mb-0">Distribuição por Status</h5>
+            </div>
+            <div class="card-body p-4">
+                <div style="height: 300px;">
+                    <canvas id="chartStatus"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row g-4">
     <!-- Table Section -->
-    <div class="col-xl-8">
-        <div class="card border-0 shadow-sm rounded-4 h-100">
+    <div class="col-xl-12">
+        <div class="card border-0 shadow-sm rounded-4">
             <div class="card-header bg-white border-0 p-4">
                 <h5 class="fw-bold mb-0">Últimos Registros</h5>
             </div>
@@ -81,35 +109,8 @@
                                 <th class="text-end pe-4">Ações</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- Exemplo de dados vindos do servidor -->
-                            <tr>
-                                <td class="ps-4"><span class="text-muted">#001</span></td>
-                                <td><span class="fw-bold">{{recente1}}</span></td>
-                                <td><span class="badge bg-success-subtle text-success rounded-pill px-3">Ativo</span></td>
-                                <td class="text-end pe-4">
-                                    <button class="btn btn-sm btn-light"><i class="fas fa-eye"></i></button>
-                                    <button class="btn btn-sm btn-light text-primary"><i class="fas fa-edit"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-4"><span class="text-muted">#002</span></td>
-                                <td><span class="fw-bold">{{recente2}}</span></td>
-                                <td><span class="badge bg-success-subtle text-success rounded-pill px-3">Ativo</span></td>
-                                <td class="text-end pe-4">
-                                    <button class="btn btn-sm btn-light"><i class="fas fa-eye"></i></button>
-                                    <button class="btn btn-sm btn-light text-primary"><i class="fas fa-edit"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-4"><span class="text-muted">#003</span></td>
-                                <td><span class="fw-bold">{{recente3}}</span></td>
-                                <td><span class="badge bg-danger-subtle text-danger rounded-pill px-3">Inativo</span></td>
-                                <td class="text-end pe-4">
-                                    <button class="btn btn-sm btn-light"><i class="fas fa-eye"></i></button>
-                                    <button class="btn btn-sm btn-light text-primary"><i class="fas fa-edit"></i></button>
-                                </td>
-                            </tr>
+                        <tbody id="listaRecentes">
+                            <!-- Preenchido via JS -->
                         </tbody>
                     </table>
                 </div>
@@ -119,32 +120,12 @@
             </div>
         </div>
     </div>
-
-    <!-- Categories Section -->
-    <div class="col-xl-4">
-        <div class="card border-0 shadow-sm rounded-4 h-100">
-            <div class="card-header bg-white border-0 p-4">
-                <h5 class="fw-bold mb-0">Categorias Ativas</h5>
-            </div>
-            <div class="card-body p-4">
-                <div class="d-flex flex-wrap gap-2">
-                    {% for categoria in categorias %}
-                        <span class="badge bg-primary-subtle text-primary p-2 px-3 rounded-3 fw-medium">
-                            <i class="fas fa-tag me-2 small"></i>{{categoria.nome}}
-                        </span>
-                    {% endfor %}
-                </div>
-                
-                <div class="mt-4 pt-4 border-top">
-                    <p class="small text-muted mb-3">Gerencie as categorias para organizar melhor seus ativos.</p>
-                    <a href="/categoria" class="btn btn-outline-primary btn-sm w-100 rounded-3 py-2 fw-bold">
-                        Gerenciar Categorias
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="/static/js/dashboard.js"></script>
+{% endblock %}
 {% endblock %}
 
 {% block scripts %}

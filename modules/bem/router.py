@@ -11,6 +11,14 @@ def get_service() -> BemService:
 def list_bens(service: BemService = Depends(get_service)):
     return service.get_bens()
 
+@router.get("/stats/categoria")
+def get_stats_categoria(service: BemService = Depends(get_service)):
+    return service.get_stats_categoria()
+
+@router.get("/stats/status")
+def get_stats_status(service: BemService = Depends(get_service)):
+    return service.get_stats_status()
+
 @router.post("/")
 def add_bem(bem: BemCreate, service: BemService = Depends(get_service)):
     return service.create_bem(bem)

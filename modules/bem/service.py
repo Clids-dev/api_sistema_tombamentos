@@ -2,12 +2,22 @@ from fastapi import HTTPException
 from modules.bem.repository import BemRepository
 from modules.bem.schemas import BemCreate
 from modules.categoria.repository import CategoriaRepository
+from modules.bem.queries_stats import QUERY_STATS_CATEGORIA, QUERY_STATS_STATUS
+from core.database import DataBase
 from psycopg2 import errors
 
 class BemService:
     def get_bens(self):
         repository = BemRepository()
         return repository.get_all()
+
+    def get_stats_categoria(self):
+        db = DataBase()
+        return db.execute_query(QUERY_STATS_CATEGORIA)
+
+    def get_stats_status(self):
+        db = DataBase()
+        return db.execute_query(QUERY_STATS_STATUS)
 
     def get_bem_by_id(self, id: int):
         try:
