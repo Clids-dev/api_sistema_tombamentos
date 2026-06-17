@@ -125,6 +125,8 @@ async function verDetalhes(id) {
 
     try {
         const bem = await api.get(`/api/v1/bem/${id}/detalhes`);
+        const historico = await api.get(`/api/v1/movimentacao/bem/${bem.codigo_tombamento}`);
+        
         const dataFormatada = bem.data_ultima_movimentacao ? new Date(bem.data_ultima_movimentacao).toLocaleString('pt-BR') : "Sem registro";
         
         container.innerHTML = `
@@ -134,7 +136,7 @@ async function verDetalhes(id) {
                 <p class="text-muted mb-0">Código: <code>${bem.codigo_tombamento}</code> | Categoria: <span class="badge bg-secondary">${bem.categoria_nome || 'N/A'}</span></p>
             </div>
             
-            <div class="row g-3">
+            <div class="row g-3 mb-4">
                 <div class="col-6">
                     <div class="p-3 bg-light rounded-3">
                         <small class="text-muted d-block mb-1">Setor Atual</small>
@@ -147,18 +149,40 @@ async function verDetalhes(id) {
                         ${getStatusBadge(bem.status, bem.ativo)}
                     </div>
                 </div>
-                <div class="col-12">
-                    <div class="p-3 bg-light rounded-3">
-                        <small class="text-muted d-block mb-1">Última Movimentação</small>
-                        <span class="fw-bold text-dark d-block"><i class="fas fa-calendar-alt text-primary me-2"></i>${dataFormatada}</span>
-                        <small class="text-muted mt-2 d-block fst-italic">"${bem.justificativa || "Nenhuma justificativa informada."}"</small>
-                    </div>
-                </div>
+            </div>
+
+            <div class="border-top pt-4">
+                <h6 class="fw-bold mb-3"><i class="fas fa-history me-2 text-primary"></i>Linha do Tempo de Movimentações</h6>
+                ${renderizarTimeline(historico)}
             </div>
         `;
     } catch (error) {
         container.innerHTML = `<div class="alert alert-danger">Erro ao carregar detalhes do equipamento.</div>`;
     }
+}
+
+function renderizarTimeline(historico) {
+    if (!historico || historico.length === 0) {
+        return `<p class="text-muted fst-italic small">Nenhuma movimentação registrada para este bem.</p>`;
+    }
+
+    return `
+        <div class="timeline">
+            ${historico.map(m => `
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">${new Date(m.data_movimentacao).toLocaleString('pt-BR')}</span>
+                        <div class="fw-bold text-dark small">${m.setor_destino_nome}</div>
+                        <div class="text-muted smaller mt-1" style="font-size: 0.8rem;">
+                            <i class="fas fa-long-arrow-alt-right me-1 text-primary"></i> Origem: ${m.setor_origem_nome || 'Cadastro Inicial'}
+                        </div>
+                        <p class="mb-0 mt-2 text-muted fst-italic" style="font-size: 0.85rem;">"${m.justificativa || 'Sem justificativa'}"</p>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
 }
 
 function getStatusBadge(status, ativo = true) {
