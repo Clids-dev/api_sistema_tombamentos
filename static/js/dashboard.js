@@ -79,18 +79,28 @@ async function renderizarGraficoStatus() {
 
         if (window.chartStat) window.chartStat.destroy();
 
-        // Mapeamento semântico de cores
+        // Função para normalizar strings de status (remove acentos, espaços e caracteres especiais)
+        const normalizarStatus = (str) => {
+            if (!str) return '';
+            return str.toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/\s+/g, '')
+                .replace(/_/g, '');
+        };
+
+        // Mapeamento semântico de cores intuitivas
         const colorMap = {
-            'disponivel': '#42b72a', // Verde
-            'em uso': '#820ad1',      // Roxo
-            'manutencao': '#f1c40f',  // Amarelo
-            'baixado': '#f02849',     // Vermelho
-            'inativo': '#f02849'      // Vermelho
+            'disponivel': '#22c55e', // Verde (Disponível/Sucesso)
+            'emuso': '#3b82f6',      // Azul (Em Uso/Ativo)
+            'manutencao': '#f59e0b',  // Amarelo/Laranja (Manutenção/Atenção)
+            'baixado': '#ef4444',     // Vermelho (Baixado/Perigo)
+            'inativo': '#6c757d'      // Cinza (Inativo)
         };
 
         const backgroundColors = labels.map(label => {
-            const key = label ? label.toLowerCase() : '';
-            return colorMap[key] || '#adb5bd'; // Cinza como fallback
+            const key = normalizarStatus(label);
+            return colorMap[key] || '#6c757d'; // Cinza como fallback
         });
 
         window.chartStat = new Chart(ctx, {

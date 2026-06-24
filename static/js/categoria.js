@@ -48,7 +48,7 @@ function renderizarCategorias(categorias) {
             <td>
                 <div class="fw-bold text-dark">${cat.nome}</div>
             </td>
-            <td>
+            <td class="text-center">
                 <span class="badge bg-light text-primary border border-primary border-opacity-25 px-3 py-2">
                     ${cat.sigla}
                 </span>
