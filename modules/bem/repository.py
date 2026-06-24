@@ -13,26 +13,16 @@ class BemRepository(DataBase):
         if not rows:
             return results
         for row in rows:
-            results.append(
-                Bem(
-                    id=row[0],
-                    nome=row[1],
-                    tipo=row[2],
-                    codigo_tombamento=row[3],
-                    valor=row[4],
-                    status=row[5],
-                    ativo=row[6]
-                )
-            )
+            results.append(Bem(id=row[0], nome=row[1], tipo=row[2], codigo_tombamento=row[3], valor=row[4], status=row[5], ativo=row[6], id_categoria=row[7]))
         return results
 
     def get_by_id(self, id: int):
         db = DataBase()
-        rows = db.execute(queries.QUERY_BEM_ID % id)
+        rows = db.execute(queries.QUERY_BEM_ID, (id,))
         if not rows:
             return None
         row = rows[0]
-        return Bem(id=row[0], nome=row[1], tipo=row[2], codigo_tombamento=row[3], valor=row[4], status=row[5], ativo=row[6])
+        return Bem(id=row[0], nome=row[1], tipo=row[2], codigo_tombamento=row[3], valor=row[4], status=row[5], ativo=row[6], id_categoria=row[7])
 
     def get_detalhes(self, id: int):
         db = DataBase()
@@ -50,27 +40,27 @@ class BemRepository(DataBase):
             ativo=row[6],
             setor_atual=row[7],
             data_ultima_movimentacao=row[8],
-            justificativa=row[9]
+            justificativa=row[9],
+            id_setor_atual=row[10],
+            id_categoria=row[11],
+            categoria_nome=row[12]
         )
 
     def save(self, bem : BemCreate):
         db = DataBase()
         query = queries.QUERY_CREATE_BEM
-        result = db.commit(query, (bem.tipo, bem.tipo, bem.nome, bem.valor, bem.status, True))
-        return Bem(
-            id=result[0],
-            nome=bem.nome,
-            tipo=bem.tipo,
-            codigo_tombamento=result[1],
-            valor=bem.valor,
-            status=bem.status,
-            ativo=True
-        )
+        result = db.commit(query, (bem.nome, bem.tipo, bem.codigo_tombamento, bem.valor, bem.status, True, bem.id_categoria))
+        return Bem(id=result[0], nome=bem.nome, tipo=bem.tipo, codigo_tombamento=bem.codigo_tombamento, valor=bem.valor, status=bem.status , ativo=True, id_categoria=bem.id_categoria)
 
-    def put(self, id: int, novo_nome: str, novo_tipo: str, novo_status: str):
+    def count_by_categoria(self, id_categoria: int):
+        db = DataBase()
+        rows = db.execute(queries.QUERY_COUNT_BY_CATEGORIA, (id_categoria,))
+        return rows[0][0] if rows else 0
+
+    def put(self, id: int, novo_nome: str, novo_status: str):
         db = DataBase()
         query = queries.QUERY_PUT_BEM
-        bem = db.commit(query, (novo_nome, novo_tipo, novo_status, id))
+        bem = db.commit(query, (novo_nome, novo_status, id))
         if bem:
             return Bem(
                 id=bem[0],
@@ -79,14 +69,15 @@ class BemRepository(DataBase):
                 codigo_tombamento=bem[3],
                 valor=bem[4],
                 status=bem[5],
-                ativo=bem[6]
+                ativo=bem[6],
+                id_categoria=bem[7]
             )
         return None
 
     def delete(self, id: int):
         db = DataBase()
-        query = queries.QUERY_DELETE_BEM % id
-        bem = db.commit(query, id)
+        query = queries.QUERY_DELETE_BEM
+        bem = db.commit(query, (id,))
         if bem:
             return Bem(
                 id=bem[0],
@@ -95,7 +86,8 @@ class BemRepository(DataBase):
                 codigo_tombamento=bem[3],
                 valor=bem[4],
                 status=bem[5],
-                ativo=False
+                ativo=False,
+                id_categoria=bem[7]
             )
         return None
 
@@ -105,7 +97,7 @@ class BemRepository(DataBase):
         if not rows:
             return None
         row = rows[0]
-        return Bem(id=row[0], nome=row[1], tipo=row[2], codigo_tombamento=row[3], valor=row[4], status=row[5], ativo=row[6])
+        return Bem(id=row[0], nome=row[1], tipo=row[2], codigo_tombamento=row[3], valor=row[4], status=row[5], ativo=row[6], id_categoria=row[7])
 
     def get_historico_by_bem(self, id: int):
         db = DataBase()
@@ -137,7 +129,8 @@ class BemRepository(DataBase):
                     codigo_tombamento=row[3],
                     valor=row[4],
                     status=row[5],
-                    ativo=bool(row[6])
+                    ativo=bool(row[6]),
+                    id_categoria=row[7]
                 )
             )
         return results

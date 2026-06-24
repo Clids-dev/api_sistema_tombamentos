@@ -1,6 +1,6 @@
-QUERY_BENS = "SELECT id, nome, tipo, codigo_tombamento, valor, status, ativo FROM bens"
+QUERY_BENS = "SELECT id, nome, tipo, codigo_tombamento, valor, status, ativo, id_categoria FROM bens"
 
-QUERY_BEM_ID = "SELECT id, nome, tipo, codigo_tombamento, valor, status, ativo FROM bens WHERE id = %s"
+QUERY_BEM_ID = "SELECT id, nome, tipo, codigo_tombamento, valor, status, ativo, id_categoria FROM bens WHERE id = %s"
 
 QUERY_BEM_DETALHES = """
     SELECT 
@@ -8,7 +8,9 @@ QUERY_BEM_DETALHES = """
         s.nome as setor_atual,
         m.data_movimentacao as data_ultima_movimentacao,
         m.justificativa,
-        s.id as id_setor_atual
+        s.id as id_setor_atual,
+        b.id_categoria,
+        c.nome as categoria_nome
     FROM bens b
     LEFT JOIN (
         SELECT DISTINCT ON (bem_id) bem_id, setor_destino_id, data_movimentacao, justificativa
@@ -17,34 +19,23 @@ QUERY_BEM_DETALHES = """
         ORDER BY bem_id, data_movimentacao DESC
     ) m ON m.bem_id = b.id
     LEFT JOIN setores s ON s.id = m.setor_destino_id
+    LEFT JOIN categorias c ON c.id = b.id_categoria
     WHERE b.id = %s
 """
 
-QUERY_CREATE_BEM =   """
-                        UPDATE tipos
-                        SET contador = contador + 1
-                        WHERE nome ILIKE (%s)
+QUERY_CREATE_BEM = ('INSERT INTO bens (nome, tipo, codigo_tombamento, valor, status, ativo, id_categoria) '
+                    'VALUES (%s, %s, %s, %s, %s, %s, %s) '
+                    'RETURNING id;')
 
-                        SELECT
-                            CONCAT(prefixo, '-', LPAD((contador + 1)::text, 4, '0')) AS codigo_tombamento
-                        FROM
-                            tipos_equipamento
-                        WHERE
-                            nome ILIKE (%s);
-                        
-                        INSERT INTO bens (nome, codigo_tombamento, valor, status, ativo) 
-                        VALUES (%s, codigo_tombamento, %s, %s, %s) 
-                        RETURNING id;"""
-
-QUERY_PUT_BEM = ("UPDATE bens SET nome = %s, status = %s, tipo = %s "
+QUERY_PUT_BEM = ("UPDATE bens SET nome = %s, status = %s "
                  "WHERE bens.id = %s "
-                 "RETURNING id, nome, tipo, codigo_tombamento, valor, status, ativo")
+                 "RETURNING id, nome, tipo, codigo_tombamento, valor, status, ativo, id_categoria")
 
 QUERY_DELETE_BEM = """UPDATE bens SET ativo = FALSE 
                       WHERE bens.id = (%s) 
-                      RETURNING id, nome, tipo, codigo_tombamento, valor, status, ativo"""
+                      RETURNING id, nome, tipo, codigo_tombamento, valor, status, ativo, id_categoria"""
 
-QUERY_BEM_CODTOMB = ("SELECT id, nome, tipo, codigo_tombamento, valor, status, ativo "
+QUERY_BEM_CODTOMB = ("SELECT id, nome, tipo, codigo_tombamento, valor, status, ativo, id_categoria "
                      "FROM bens "
                      "WHERE codigo_tombamento = %s")
 
@@ -53,7 +44,7 @@ QUERY_HISTORICO = """SELECT id, bem_id, setor_origem_id, setor_destino_id, data_
                      ORDER BY data_movimentacao DESC"""
 
 QUERY_BENS_POR_SETOR = """
-                       SELECT b.id, b.nome, b.tipo, b.codigo_tombamento,b.valor, b.status, b.ativo
+                       SELECT b.id, b.nome, b.tipo, b.codigo_tombamento, b.valor, b.status, b.ativo, b.id_categoria
                        FROM bens b
                        JOIN (SELECT DISTINCT ON (bem_id) bem_id, setor_destino_id 
                              FROM movimentacoes WHERE ativo = TRUE 
@@ -65,13 +56,7 @@ QUERY_DESATIVAR = "UPDATE bens SET ativo = false WHERE id = %s RETURNING id"
 
 QUERY_REATIVAR = "UPDATE bens SET ativo = true  WHERE id = %s RETURNING id"
 
-QUERY_ULTIMO_SETOR = """
-        SELECT setor_destino_id 
-        FROM movimentacoes 
-        WHERE bem_id = %s AND ativo = TRUE
-        ORDER BY data_movimentacao DESC 
-        LIMIT 1;
-    """
+QUERY_COUNT_BY_CATEGORIA = "SELECT COUNT(*) FROM bens WHERE id_categoria = %s"
 
 QUERY_RELATORIO_ATIVOS = """
         SELECT status, COUNT(*) AS quantidade
@@ -88,8 +73,7 @@ QUERY_QUANTIDADE_BENS_ATIVOS = """SELECT COUNT (*) FROM bens
 QUERY_QUANTIDADE_BENS_INATIVOS = """SELECT COUNT (*) FROM bens 
                                     WHERE ativo = FALSE;"""
 
-# queries.py
-QUERY_RECENTES = """SELECT id, nome, codigo_tombamento, valor, status, ativo, data_cadastro
+QUERY_RECENTES = """SELECT id, nome, tipo, codigo_tombamento, valor, status, ativo, data_cadastro, id_categoria
                     FROM bens 
                     ORDER BY data_cadastro 
                     DESC LIMIT 3;"""

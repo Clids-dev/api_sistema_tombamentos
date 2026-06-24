@@ -1,10 +1,11 @@
 QUERY_SETORES = """SELECT
-                        s.id as id_setor,
-                        s.nome as setor,
-                        s.responsavel_id as id_responsavel,
-                        r.nome as responsavel,
+                        s.id,
+                        s.nome,
+                        s.responsavel_id,
+                        r.nome as responsavel_nome,
                         r.cargo as cargo_responsavel,
-                        s.flag_almoxarifado
+                        s.flag_almoxarifado,
+                        s.ativo
                     FROM
                         setores s
                     LEFT JOIN
@@ -12,8 +13,9 @@ QUERY_SETORES = """SELECT
                     WHERE
                         s.ativo = TRUE;"""
 
-QUERY_SETOR_BY_ID = """SELECT s.id as id_setor, s.nome as setor, s.responsavel_id as id_responsavel,
-                        r.nome as responsavel, r.cargo as cargo_responsavel, s.flag_almoxarifado
+QUERY_SETOR_BY_ID = """SELECT s.id, s.nome, s.responsavel_id,
+                        r.nome as responsavel_nome, r.cargo as cargo_responsavel, 
+                        s.flag_almoxarifado, s.ativo
                        FROM setores s
                         LEFT JOIN responsaveis r ON s.responsavel_id = r.id 
                        WHERE s.id = %s AND s.ativo = TRUE;"""

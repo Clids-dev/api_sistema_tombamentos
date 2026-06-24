@@ -11,12 +11,13 @@ class SetorRepository:
             return results
         for row in rows:
             results.append(SetorFlat(
-                id_setor=row[0],
-                setor=row[1],
-                id_responsavel=row[2],
-                responsavel=row[3],
+                id=row[0],
+                nome=row[1],
+                responsavel_id=row[2],
+                responsavel_nome=row[3],
                 cargo_responsavel=row[4],
-                flag_almoxarifado=bool(row[5])
+                flag_almoxarifado=bool(row[5]),
+                ativo=bool(row[6])
             ))
         return results
 
@@ -27,12 +28,13 @@ class SetorRepository:
             return None
         row = rows[0]
         return SetorFlat(
-            id_setor=row[0],
-            setor=row[1],
-            id_responsavel=row[2],
-            responsavel=row[3],
+            id=row[0],
+            nome=row[1],
+            responsavel_id=row[2],
+            responsavel_nome=row[3],
             cargo_responsavel=row[4],
-            flag_almoxarifado=bool(row[5])
+            flag_almoxarifado=bool(row[5]),
+            ativo=bool(row[6])
         )
 
     def save(self, setor: SetorCreate):

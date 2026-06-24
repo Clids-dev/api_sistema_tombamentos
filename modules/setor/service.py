@@ -26,7 +26,7 @@ class SetorService:
                 raise ValueError("Responsável não encontrado")
             setor_repository = SetorRepository()
             for setores in setor_repository.get_all():
-                if setores.setor == setor.nome:
+                if setores.nome == setor.nome:
                     raise FileNotFoundError
             if setor.nome == "":
                 raise ValueError
@@ -40,20 +40,21 @@ class SetorService:
 
     def put_setor(self, id: int, novo_nome: str, novo_responsavel_id: int):
         try:
-            if self.get_setor_by_id(id) is None:
+            setor_atual = self.get_setor_by_id(id)
+            if setor_atual is None:
                 raise HTTPException(status_code=404, detail=f"Setor com id {id} não encontrado")
-            if novo_nome == "" and novo_responsavel_id is None:
+            
+            if not novo_nome and novo_responsavel_id is None:
                     raise ValueError("Nenhum dado fornecido para atualização.")
-            if novo_nome == "":
-                novo_nome = self.get_setor_by_id(id).setor
+            
+            if not novo_nome:
+                novo_nome = setor_atual.nome
             if novo_responsavel_id is None:
-                novo_responsavel_id = self.get_setor_by_id(id).id_responsavel
-            if novo_nome == self.get_setor_by_id(id).setor and novo_responsavel_id == self.get_setor_by_id(id).id_responsavel:
+                novo_responsavel_id = setor_atual.responsavel_id
+            
+            if novo_nome == setor_atual.nome and novo_responsavel_id == setor_atual.responsavel_id:
                 raise ValueError("Os dados fornecidos são iguais aos atuais.")
-            if novo_nome == self.get_setor_by_id(id).setor and novo_responsavel_id is None:
-                raise ValueError("Os dados fornecidos são iguais aos atuais.")
-            if novo_responsavel_id == self.get_setor_by_id(id).id_responsavel and novo_nome == "":
-                raise ValueError("Os dados fornecidos são iguais aos atuais.")
+
             repository = SetorRepository()
             return repository.put(int(id), novo_nome, int(novo_responsavel_id))
         except ValueError as e:
