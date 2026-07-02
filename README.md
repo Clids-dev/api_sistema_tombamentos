@@ -254,7 +254,7 @@ GET /relatorios/bens-ativos-por-status
 
 **Pedro Henrique do Santos**
 
-**Guilherme Henrique M. G. Santana**
+**Guilherme Henrique Mendes Goçalves Santana**
 
 Desenvolvedores do projeto *Sistema de Tombamento*.
 
