@@ -1,261 +1,137 @@
+# Sistema de Tombamento (PatriFlow)
 
-# Sistema de Tombamento – API e Modelo de Dados
-
-Este documento descreve o projeto **Sistema de Tombamento**, desenvolvido em FastAPI, incluindo **modelo de dados**, **endpoints CRUD**, **endpoints específicos**, **requisitos**, **instalação**, **execução** e **fluxo geral do sistema**.
+O **Sistema de Tombamento (PatriFlow)** é uma solução web e API REST moderna, desenvolvida para o gerenciamento, controle e auditoria de bens patrimoniais corporativos, seus setores, categorias e responsáveis. Ele permite rastrear a movimentação de cada ativo, gerenciar os níveis de acesso de usuários, visualizar indicadores estatísticos e exportar relatórios customizados em formato PDF e Excel.
 
 ---
 
-# 1. Requisitos para o projeto
+## Recursos Principais
 
-## 1. Criar e ativar o ambiente virtual:
+### 1. Gestão de Ativos (Bens)
+- **Cadastro Detalhado:** Registro de bens com nome, valor, categoria, status e setor de localização.
+- **Códigos de Tombamento Automáticos:** Geração padronizada no formato `SIGLA-00X`, onde a sigla (sem acentos) é derivada automaticamente da categoria.
+- **Ciclo de Vida (Soft Delete):** Inativação lógica (`ativo = FALSE`) que preserva o histórico de movimentações e auditoria.
+- **Histórico Completo (Timeline):** Visualização gráfica e cronológica das transferências de um bem no modal de detalhes.
 
-```bash
-python3 -m venv venv
-source venv/bin/activate     # Linux/Mac
-# ou
-venv\Scripts\activate        # Windows
+### 2. Gestão de Entidades de Apoio
+- **Categorias:** Organização dos bens (ex.: Informática, Mobiliário) com parametrização de siglas de tombamento.
+- **Setores:** Controle físico ou lógico das localizações onde os bens estão alocados.
+- **Responsáveis:** Associação de pessoal qualificado (gestores de setores) encarregados pelo patrimônio.
+
+### 3. Movimentações e Auditoria
+- **Histórico de Transferências:** Registro de todas as movimentações de bens entre setores.
+- **Transferência Rápida:** Funcionalidade para mover um bem de setor em poucos cliques com validação automática.
+
+### 4. Inteligência e Relatórios (Avançado)
+- **Dashboard Estatístico:** Painel interativo com gráficos desenvolvidos em **Chart.js** exibindo:
+  - Distribuição de bens ativos e inativos.
+  - Distribuição quantitativa e financeira de bens por categoria.
+  - Status dos ativos no sistema (Ex.: Em Uso, Manutenção, Baixado).
+- **Exportação Customizada de Relatórios:**
+  - Em formato **Excel (XLSX)** e **PDF**.
+  - Filtros avançados por categoria, setor e status do bem.
+
+### 5. Segurança e Controle de Acesso
+- **Autenticação de Usuários:** Sistema de login com persistência de sessão baseada em cookies seguros.
+- **Níveis de Permissão:** Controle do tipo de usuário (`admin` para gestão total e alterações cadastrais, e `comum` para consultas e operações básicas).
+
+---
+
+## Tecnologias e Dependências
+
+- **Backend:** [FastAPI](https://fastapi.tiangolo.com/) (Python 3.x) — Framework de alta performance, fácil de estender e com validação robusta baseada em **Pydantic**.
+- **Banco de Dados:** PostgreSQL — Execução de **Raw SQL** de alta performance via `psycopg2-binary`, sem a sobrecarga de ORMs.
+- **Frontend:** HTML5, CSS3 Customizado, **Bootstrap 5**, e Jinja2 Templates para renderização dinâmica no servidor.
+- **JavaScript:** ES6+ Modular com desacoplamento de arquivos JS (ex.: `dashboard.js`, `bens.js`, `utils.js`).
+- **Geração de Documentos:** `fpdf2` (para PDFs) e `pandas`/`openpyxl` (para planilhas Excel).
+
+---
+
+## Arquitetura do Projeto
+
+O projeto segue uma arquitetura modular por domínio:
+
+```
+├── main.py                     # Ponto de entrada do FastAPI
+├── requirements.txt            # Dependências do Python
+├── tabelasDados.sql            # Script de inicialização do banco PostgreSQL
+├── core/                       # Configurações globais e classe de banco
+│   ├── config.py               # Credenciais e conexões do BD
+│   └── database.py             # Pooling de conexão e execução SQL
+├── modules/                    # Módulos de domínio da aplicação
+│   ├── bem/                    # CRUD de bens, queries e estatísticas
+│   ├── categoria/              # CRUD de categorias e siglas de tombamento
+│   ├── setor/                  # CRUD de setores e relacionamento
+│   ├── responsavel/            # CRUD de responsáveis e cargos
+│   ├── movimentacao/           # Histórico de transferências de bens
+│   ├── relatorio/              # Lógica de exportação (Excel e PDF)
+│   └── usuario/                # Autenticação e credenciais do sistema
+├── api/v1/                     # Roteamento da API JSON REST
+├── web/                        # Rotas web que servem os templates Jinja2
+├── templates/                  # Arquivos HTML Jinja2 (base.html, index.html, etc.)
+└── static/                     # Arquivos estáticos (CSS, JS, Imagens)
 ```
 
-## 2. Instalar as dependências:
+---
+
+## Configuração e Instalação
+
+### Pré-requisitos
+- Python 3.10+ instalado.
+- Banco de Dados PostgreSQL ativo.
+
+### 1. Clonar o projeto e criar o Ambiente Virtual
+
+```bash
+# Crie o ambiente virtual
+python -m venv venv
+
+# Ative o ambiente virtual
+# No Linux/macOS:
+source venv/bin/activate
+# No Windows:
+venv\Scripts\activate
+```
+
+### 2. Instalar as Dependências
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 3. Executar o projeto:
+### 3. Configurar o Banco de Dados
 
-1. Certifique-se de que o ambiente virtual está ativo.
-2. Execute o servidor de desenvolvimento:
+1. Certifique-se de que o PostgreSQL está rodando.
+2. Crie um banco de dados no PostgreSQL (por padrão, chamado `sistema_tombamento`).
+3. Execute o script `tabelasDados.sql` no seu gerenciador de banco de dados (ex.: DBeaver, pgAdmin) para criar as tabelas e dados iniciais.
+4. Ajuste as credenciais no arquivo `core/config.py`:
+
+```python
+DB_HOST = "127.0.0.1"
+DB_PORT = 5433 # Altere para a sua porta do PostgreSQL se for diferente (padrão 5432)
+DB_USER = "postgres"
+DB_PASSWORD = "sua_senha"
+DB_NAME = "sistema_tombamento"
+```
+
+### 4. Executar o Servidor de Desenvolvimento
+
+Execute o comando Uvicorn para iniciar a aplicação:
 
 ```bash
 uvicorn main:app --reload
 ```
 
-A API ficará disponível em:
-
-```
-http://127.0.0.1:8000
-```
-
-Documentação automática:
-
-```
-/docs
-/redoc
-```
+A aplicação estará disponível em:
+- **Interface Web:** [http://127.0.0.1:8000/index](http://127.0.0.1:8000/index) (necessita de login prévio ou use os dados de teste do SQL)
+- **Documentação Swagger (API REST):** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- **Documentação ReDoc:** [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
 ---
 
-# 2. Modelo de Dados (Tabelas)
-
-## 2.1 Bem
-
-* id
-* nome
-* codigo_tombamento (único)
-* valor
-* status
-* ativo
-
-## 2.2 Categoria
-
-* id
-* nome
-* ativo
-
-## 2.3 Setor
-
-* id
-* nome
-* responsavel
-* ativo
-
-## 2.4 Responsável
-
-* id
-* nome
-* cargo
-* ativo
-
-## 2.5 Movimentação
-
-* id
-* bem_id
-* setor_origem_id
-* setor_destino_id
-* data
-* ativo
-
----
-
-# 3. Endpoints CRUD
-
-## 3.1 Bens
-
-Base: `/bens`
-
-### POST /bens
-
-```json
-{
-  "nome": "Notebook Dell 15",
-  "codigo_tombamento": "TMB-2025-0001",
-  "valor": 5200,
-  "status": "em_uso"
-}
-```
-
-### GET /bens
-
-QueryParams opcionais: nome, codigo_tombamento, status, ativo, valor_min, valor_max.
-
-### GET /bens/{id}
-
-### PUT /bens/{id}
-
-### DELETE /bens/{id}
-
-Soft delete (ativo = false)
-
----
-
-## 3.2 Categorias
-
-Base: `/categorias`
-
-### POST /categorias
-
-```json
-{ "nome": "Informática" }
-```
-
-### GET /categorias
-
-### GET /categorias/{id}
-
-### PUT /categorias/{id}
-
-### DELETE /categorias/{id}
-
----
-
-## 3.3 Setores
-
-Base: `/setores`
-
-### POST /setores
-
-```json
-{ "nome": "TI", "responsavel": "Coord. de TI" }
-```
-
-### GET /setores
-
-### GET /setores/{id}
-
-### PUT /setores/{id}
-
-### DELETE /setores/{id}
-
----
-
-## 3.4 Responsáveis
-
-Base: `/responsaveis`
-
-### POST /responsaveis
-
-### GET /responsaveis
-
-### GET /responsaveis/{id}
-
-### PUT /responsaveis/{id}
-
-### DELETE /responsaveis/{id}
-
----
-
-## 3.5 Movimentações
-
-Base: `/movimentacoes`
-
-### POST /movimentacoes
-
-```json
-{
-  "bem_id": 1,
-  "setor_origem_id": 2,
-  "setor_destino_id": 5,
-  "data": "2025-10-20T14:30:00Z"
-}
-```
-
-### GET /movimentacoes
-
-### GET /movimentacoes/{id}
-
-### PUT /movimentacoes/{id}
-
-### DELETE /movimentacoes/{id}
-
----
-
-# 4. Endpoints Específicos
-
-## 4.1 Buscar bem por código de tombamento
-
-```
-GET /bens/buscar?codigo_tombamento=XXXX
-```
-
-## 4.2 Histórico de movimentações
-
-```
-GET /bens/{id}/historico-movimentacoes
-```
-
-## 4.3 Listar bens por setor atual
-
-```
-GET /bens/por-setor?setor_id=5
-```
-
-## 4.4 Transferência rápida
-
-```
-POST /bens/{id}/transferir
-```
-
-## 4.5 Relatório: bens ativos por status
-
-```
-GET /relatorios/bens-ativos-por-status
-```
-
----
-
-# 5. Fluxo Geral do Sistema
-
-## Cadastro + Movimentação
-
-1. Criar bem
-2. Registrar movimentação
-3. Consultar setor atual
-
-## Desativação
-
-1. Desativar bem (DELETE ou endpoint específico)
-2. Filtrar listagens com `ativo=true`
-
-
-## Equipe
-
-**José Euclides H Barros**
-
-**Pedro Henrique do Santos**
-
-**Guilherme Henrique Mendes Goçalves Santana**
+## 👥 Equipe
+
+- **José Euclides H Barros**
+- **Pedro Henrique do Santos**
+- **Guilherme Henrique M. G. Santana**
 
 Desenvolvedores do projeto *Sistema de Tombamento*.
-
-
