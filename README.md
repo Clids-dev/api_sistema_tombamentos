@@ -4,7 +4,7 @@ O **Sistema de Tombamento (PatriFlow)** é uma solução web e API REST moderna,
 
 ---
 
-## 🚀 Recursos Principais
+## Recursos Principais
 
 ### 1. Gestão de Ativos (Bens)
 - **Cadastro Detalhado:** Registro de bens com nome, valor, categoria, status e setor de localização.
@@ -36,7 +36,7 @@ O **Sistema de Tombamento (PatriFlow)** é uma solução web e API REST moderna,
 
 ---
 
-## 🛠️ Tecnologias e Dependências
+## Tecnologias e Dependências
 
 - **Backend:** [FastAPI](https://fastapi.tiangolo.com/) (Python 3.x) — Framework de alta performance, fácil de estender e com validação robusta baseada em **Pydantic**.
 - **Banco de Dados:** PostgreSQL — Execução de **Raw SQL** de alta performance via `psycopg2-binary`, sem a sobrecarga de ORMs.
@@ -46,7 +46,7 @@ O **Sistema de Tombamento (PatriFlow)** é uma solução web e API REST moderna,
 
 ---
 
-## 📂 Arquitetura do Projeto
+## Arquitetura do Projeto
 
 O projeto segue uma arquitetura modular por domínio:
 
@@ -73,7 +73,7 @@ O projeto segue uma arquitetura modular por domínio:
 
 ---
 
-## ⚙️ Configuração e Instalação
+## Configuração e Instalação
 
 ### Pré-requisitos
 - Python 3.10+ instalado.
