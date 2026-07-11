@@ -150,3 +150,12 @@ cython_debug/
 
 # HTTP test files (optional - remove if you want to track these)
 *.http
+
+# Testes locais e relatórios de cobertura
+test_*.py
+.pytest_cache/
+.coverage
+
+# Documentações internas e de suporte ao agente
+GEMINI.md
+DOCUMENTACAO.md
