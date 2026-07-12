@@ -9,7 +9,7 @@ QUERY_REPORT_BENS = """
         b.status,
         CASE WHEN b.ativo THEN 'Ativo' ELSE 'Inativo' END as situacao
     FROM bens b
-    JOIN categorias c ON b.id_categoria = c.id
+    LEFT JOIN categorias c ON b.id_categoria = c.id
     LEFT JOIN movimentacoes m ON m.id = (
         SELECT id FROM movimentacoes 
         WHERE bem_id = b.id AND ativo = TRUE 

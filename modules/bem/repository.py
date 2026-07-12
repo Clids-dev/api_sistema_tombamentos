@@ -1,5 +1,5 @@
 from core.database import DataBase
-from modules.bem.schemas import BemCreate, Bem, BemDetalhes
+from modules.bem.schemas import BemCreate, BemUpdate, Bem, BemDetalhes
 from modules.movimentacao.schemas import Movimentacao
 from modules.bem import queries as queries
 
@@ -57,10 +57,10 @@ class BemRepository(DataBase):
         rows = db.execute(queries.QUERY_COUNT_BY_CATEGORIA, (id_categoria,))
         return rows[0][0] if rows else 0
 
-    def put(self, id: int, novo_nome: str, novo_status: str):
+    def put(self, id: int, bem_atualizado: BemUpdate):
         db = DataBase()
         query = queries.QUERY_PUT_BEM
-        bem = db.commit(query, (novo_nome, novo_status, id))
+        bem = db.commit(query, (bem_atualizado.nome, bem_atualizado.valor, bem_atualizado.status, id))
         if bem:
             return Bem(
                 id=bem[0],

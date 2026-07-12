@@ -1,6 +1,7 @@
 import pandas as pd
 from io import BytesIO
 from fpdf import FPDF
+from fpdf.fonts import FontFace
 from .repository import RelatorioRepository
 
 class RelatorioService:
@@ -31,35 +32,25 @@ class RelatorioService:
         pdf.cell(0, 10, "PatriFlow - Relatório de Inventário de Bens", ln=True, align='C')
         pdf.ln(10)
 
-        # Cabeçalho da tabela
-        pdf.set_font("helvetica", "B", 10)
-        pdf.set_fill_color(130, 10, 209) # Cor primária do PatriFlow
-        pdf.set_text_color(255, 255, 255)
-        
-        cols = [
-            ('Cód. Tombamento', 40), ('Nome do Bem', 70), 
-            ('Categoria', 40), ('Setor Atual', 40), 
-            ('Valor', 25), ('Status', 30), ('Sit.', 20)
-        ]
+        pdf.set_font("helvetica", size=8)
+        headings_style = FontFace(emphasis="BOLD", color=(255, 255, 255), fill_color=(130, 10, 209))
+        with pdf.table(
+            col_widths=(18, 30, 18, 18, 12, 16, 10),
+            headings_style=headings_style,
+            line_height=5,
+            padding=1,
+            text_align=("L", "L", "L", "L", "R", "C", "C"),
+        ) as table:
+            header = table.row()
+            for label in ("Cód. Tombamento", "Nome do Bem", "Categoria", "Setor Atual", "Valor", "Status", "Sit."):
+                header.cell(label)
 
-        for col_name, width in cols:
-            pdf.cell(width, 10, col_name, border=1, align='C', fill=True)
-        pdf.ln()
-
-        # Dados
-        pdf.set_font("helvetica", "", 9)
-        pdf.set_text_color(0, 0, 0)
-        
-        for row in data:
-            # row indices based on QUERY_REPORT_BENS: 
-            # 0:id, 1:nome, 2:codigo, 3:cat, 4:setor, 5:valor, 6:status, 7:situacao
-            pdf.cell(40, 8, str(row[2]), border=1)
-            pdf.cell(70, 8, str(row[1])[:35], border=1)
-            pdf.cell(40, 8, str(row[3]), border=1)
-            pdf.cell(40, 8, str(row[4] or 'Não Alocado'), border=1)
-            pdf.cell(25, 8, f"R$ {row[5]:.2f}", border=1, align='R')
-            pdf.cell(30, 8, str(row[6]), border=1)
-            pdf.cell(20, 8, str(row[7]), border=1, align='C')
-            pdf.ln()
+            for row in data:
+                report_row = table.row()
+                for value in (
+                    row[2], row[1], row[3] or "Sem categoria", row[4] or "Não alocado",
+                    f"R$ {row[5]:.2f}", row[6], row[7],
+                ):
+                    report_row.cell(str(value))
 
         return bytes(pdf.output())

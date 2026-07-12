@@ -27,8 +27,8 @@ QUERY_CREATE_BEM = ('INSERT INTO bens (nome, tipo, codigo_tombamento, valor, sta
                     'VALUES (%s, %s, %s, %s, %s, %s, %s) '
                     'RETURNING id;')
 
-QUERY_PUT_BEM = ("UPDATE bens SET nome = %s, status = %s "
-                 "WHERE bens.id = %s "
+QUERY_PUT_BEM = ("UPDATE bens SET nome = %s, valor = %s, status = %s "
+                 "WHERE bens.id = %s AND ativo = TRUE "
                  "RETURNING id, nome, tipo, codigo_tombamento, valor, status, ativo, id_categoria")
 
 QUERY_DELETE_BEM = """UPDATE bens SET ativo = FALSE 

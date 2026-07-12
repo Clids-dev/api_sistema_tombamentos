@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from modules.bem.service import BemService
-from modules.bem.schemas import BemCreate
+from modules.bem.schemas import BemCreate, BemUpdate
 
 router = APIRouter(prefix="/bem", tags=["Bens"])
 
@@ -22,6 +22,10 @@ def get_stats_status(service: BemService = Depends(get_service)):
 @router.post("/")
 def add_bem(bem: BemCreate, service: BemService = Depends(get_service)):
     return service.create_bem(bem)
+
+@router.put("/{id}")
+def update_bem(id: int, bem: BemUpdate, service: BemService = Depends(get_service)):
+    return service.put_bem(id, bem)
 
 @router.get("/buscar")
 def buscar_por_codigo(codigo_tombamento: str, service: BemService = Depends(get_service)):

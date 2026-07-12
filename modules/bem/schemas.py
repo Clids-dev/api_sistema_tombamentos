@@ -14,10 +14,16 @@ class Bem(BaseModel):
 
 class BemCreate(BaseModel):
     nome: str
-    tipo: str
+    tipo: str = "Equipamento"
+    codigo_tombamento: str
     valor: float
     status: str
     id_categoria: int
+
+class BemUpdate(BaseModel):
+    nome: str
+    valor: float
+    status: str
 
 class BemDeleteResponse(BaseModel):
     message: str

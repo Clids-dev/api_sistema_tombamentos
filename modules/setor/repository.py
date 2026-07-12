@@ -52,8 +52,9 @@ class SetorRepository:
         return None
 
     def delete(self, id: int):
+        setor = self.get_id(id)
         db = DataBase()
         result = db.commit(queries.QUERY_DELETE_SETOR, (id,))
         if result:
-            return self.get_id(id)
+            return setor.model_copy(update={"ativo": False})
         return None
