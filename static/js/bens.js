@@ -70,7 +70,7 @@ function renderizarTabela() {
             <td class="text-end pe-4">
                 <div class="btn-group">
                     <button class="btn btn-sm btn-light text-primary btn-detalhes" data-id="${bem.id}" title="Ver Detalhes"><i class="fas fa-eye"></i></button>
-                    <button class="btn btn-sm btn-light text-warning" title="Editar"><i class="fas fa-edit"></i></button>
+                    ${bem.ativo ? `<button class="btn btn-sm btn-light text-warning btn-editar" data-id="${bem.id}" title="Editar"><i class="fas fa-edit"></i></button>` : ''}
                     ${bem.ativo ? 
                         `<button class="btn btn-sm btn-light text-danger btn-deletar" data-id="${bem.id}" title="Desativar"><i class="fas fa-trash"></i></button>` :
                         `<button class="btn btn-sm btn-light text-success btn-reativar" data-id="${bem.id}" title="Reativar"><i class="fas fa-redo"></i></button>`
@@ -79,6 +79,10 @@ function renderizarTabela() {
             </td>
         </tr>
     `).join('');
+
+    tabela.querySelectorAll('.btn-editar').forEach(btn => {
+        btn.addEventListener('click', () => editarBem(btn.dataset.id));
+    });
 
     const totalItens = filtrados.length;
     const mostradoFim = Math.min(fim, totalItens);
@@ -310,6 +314,35 @@ function setupListeners() {
             btn.innerHTML = originalContent;
         }
     };
+
+    $("#formEditarBem").onsubmit = async (e) => {
+        e.preventDefault();
+        const id = $("#editar_id").value;
+        const bem = {
+            nome: $("#editar_nome").value,
+            valor: parseFloat($("#editar_valor").value),
+            status: $("#editar_status").value
+        };
+
+        try {
+            await api.put(`/api/v1/bem/${id}`, bem);
+            bootstrap.Modal.getInstance($("#modalEditarBem")).hide();
+            ui.showNotification("Equipamento atualizado com sucesso!");
+            carregarBens();
+        } catch (error) {
+            ui.showNotification(error.message, "error");
+        }
+    };
+}
+
+function editarBem(id) {
+    const bem = todosBens.find(item => item.id === Number(id));
+    if (!bem) return;
+    $("#editar_id").value = bem.id;
+    $("#editar_nome").value = bem.nome;
+    $("#editar_valor").value = bem.valor;
+    $("#editar_status").value = bem.status;
+    bootstrap.Modal.getOrCreateInstance($("#modalEditarBem")).show();
 }
 
 async function deletar(id) {
